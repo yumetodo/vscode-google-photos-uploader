@@ -225,15 +225,15 @@ export namespace Photos {
       while (true) {
         responce = await this.authManager.request<Albums.ListResponce>(opt).then(a => a.data);
         if (responce.albums && Array.isArray(responce.albums)) {
-        re = [...re, ...responce.albums];
-        if (responce.nextPageToken) {
-          opt.params.pageToken = responce.nextPageToken;
-        } else {
-          break;
-        }
+          re = [...re, ...responce.albums];
+          if (responce.nextPageToken) {
+            opt.params.pageToken = responce.nextPageToken;
+          } else {
+            break;
+          }
         } else {
           return [];
-      }
+        }
       }
       return re;
     }
@@ -269,6 +269,18 @@ export namespace Photos {
           body: JSON.stringify(body),
         })
         .then(r => r.data.newMediaItemResults);
+    }
+    async batchGet(mediaItemIds: string[]): Promise<MediaItemResult[]> {
+      return this.authManager
+        .request<MediaItems.BatchGetResponce>({
+          method: 'GET',
+          url: 'https://photoslibrary.googleapis.com/v1/mediaItems:batchGet',
+          validateStatus: status => status >= 200 && status < 300,
+          params: {
+            mediaItemIds: mediaItemIds,
+          },
+        })
+        .then(r => r.data.mediaItemResults);
     }
     async searchAll(albumId: string): Promise<MediaItem[]>;
     async searchAll(filters: Filters): Promise<MediaItem[]>;
@@ -317,6 +329,9 @@ export namespace Photos {
     }
     export interface BatchCreateResponce {
       newMediaItemResults: NewMediaItemResult[];
+    }
+    export interface BatchGetResponce {
+      mediaItemResults: MediaItemResult[];
     }
     export interface SearchBody {
       albumId?: string;
