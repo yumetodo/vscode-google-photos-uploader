@@ -224,12 +224,16 @@ export namespace Photos {
       };
       while (true) {
         responce = await this.authManager.request<Albums.ListResponce>(opt).then(a => a.data);
+        if (responce.albums && Array.isArray(responce.albums)) {
         re = [...re, ...responce.albums];
         if (responce.nextPageToken) {
           opt.params.pageToken = responce.nextPageToken;
         } else {
           break;
         }
+        } else {
+          return [];
+      }
       }
       return re;
     }
@@ -239,7 +243,7 @@ export namespace Photos {
       album: Album;
     }
     export interface ListResponce {
-      albums: OutputonlyAlbum[];
+      albums?: OutputonlyAlbum[];
       nextPageToken?: string;
     }
     export interface ListParam {
