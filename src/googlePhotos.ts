@@ -200,13 +200,13 @@ export namespace Photos {
     constructor(authManager: AuthManager) {
       this.authManager = authManager;
     }
-    async create(album: Album) {
+    async create(body: Albums.CreateBody) {
       return this.authManager
         .request<OutputonlyAlbum>({
           method: 'POST',
           url: 'https://photoslibrary.googleapis.com/v1/albums',
           validateStatus: status => status >= 200 && status < 300,
-          body: JSON.stringify(album),
+          body: JSON.stringify(body),
         })
         .then(a => a.data);
     }
