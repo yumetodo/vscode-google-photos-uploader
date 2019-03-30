@@ -99,10 +99,12 @@ export namespace Photos {
     message?: string;
     details?: object[];
   }
-  export interface NewMediaItemResult {
-    uploadToken?: string;
+  export interface MediaItemResult {
     status?: Status;
     mediaItem?: MediaItem;
+  }
+  export interface NewMediaItemResult extends MediaItemResult {
+    uploadToken?: string;
   }
   export type PositionType =
     | 'POSITION_TYPE_UNSPECIFIED'
