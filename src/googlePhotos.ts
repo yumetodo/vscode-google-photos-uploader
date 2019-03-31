@@ -11,24 +11,24 @@ export class Photos {
     this.albums = new Photos.Albums(authManager);
     this.mediaItems = new Photos.MediaItems(authManager);
   }
-  async upload(filepath: string[]): Promise<string[]> {
-    const posting = filepath.map(f =>
-      this.authManager
-        .request<string>({
-          method: 'POST',
-          url: 'https://photoslibrary.googleapis.com/v1/uploads',
-          headers: {
-            'Content-type': 'application/octet-stream',
-            'X-Goog-Upload-File-Name': path.basename(f),
-            'X-Goog-Upload-Protocol': 'raw',
-          },
-          data: fs.createReadStream(f),
-          responseType: 'text',
-          validateStatus: status => status >= 200 && status < 300,
-        })
-        .then(r => r.data)
-    );
-    return await Promise.all(posting);
+  async upload(filepath: string): Promise<string> {
+    return this.authManager
+      .request<string>({
+        method: 'POST',
+        url: 'https://photoslibrary.googleapis.com/v1/uploads',
+        headers: {
+          'Content-type': 'application/octet-stream',
+          'X-Goog-Upload-File-Name': path.basename(filepath),
+          'X-Goog-Upload-Protocol': 'raw',
+        },
+        data: fs.createReadStream(filepath),
+        responseType: 'text',
+        validateStatus: status => status >= 200 && status < 300,
+      })
+      .then(r => r.data);
+  }
+  async uploadAll(filepath: string[]): Promise<string[]> {
+    return Promise.all(filepath.map(f => this.upload(f)));
   }
 }
 export namespace Photos {
