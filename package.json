@@ -6,12 +6,18 @@
 	"engines": {
 		"vscode": "^1.31.0"
 	},
+	"author": "yumetodo",
+	"license": "BSL-1.0",
 	"categories": [
 		"Other"
 	],
 	"activationEvents": [
 		"onCommand:extension.helloWorld"
 	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/yumetodo/vscode-google-photos-uploader.git"
+	},
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
@@ -49,17 +55,18 @@
 	},
 	"devDependencies": {
 		"@types/mocha": "^2.2.42",
-		"@types/node": "^11.12.2",
-		"prettier": "^1.16.4",
-		"tslint": "^5.14.0",
+		"@types/node": "^11.13.7",
+		"prettier": "^1.17.0",
+		"tslint": "^5.16.0",
 		"tslint-plugin-prettier": "^2.0.1",
-		"typescript": "^3.4.1",
+		"typescript": "^3.4.5",
 		"vscode": "^1.1.33"
 	},
 	"dependencies": {
 		"abort-controller": "^3.0.0",
 		"axios": "^0.18.0",
-		"gaxios": "^1.8.2",
-		"googleapis": "^39.1.0"
+		"gaxios": "^1.8.4",
+		"googleapis": "^39.2.0",
+		"markdown_img_url_editor": "^3.0.0"
 	}
 }
