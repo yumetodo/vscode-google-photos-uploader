@@ -17,3 +17,4 @@
 - [googlephotos - npm](https://www.npmjs.com/package/googlephotos)
 - [Google Photos API を使用した画像の自動アップロード - Qiita](https://qiita.com/inasawa/items/e5362dec4bd45d6900f7)
 - [epoberezkin/fast-deep-equal: The fastest deep equality check with Date and RegExp support](https://github.com/epoberezkin/fast-deep-equal)
+- [vscodeのextensionですべてのテキストを書き換える - garicchi.com](https://garicchi.com/?p=19533)
