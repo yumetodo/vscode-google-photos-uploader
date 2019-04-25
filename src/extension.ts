@@ -6,7 +6,10 @@ import { Configuration } from './configuration';
 import { AuthManager } from './authManager';
 import { Photos } from './googlePhotos';
 import AbortController from 'abort-controller';
+import { markdownImgUrlEditor } from 'markdown_img_url_editor';
 // const promises: Promise<any>[] = [];
+const getUrl = (r: Photos.MediaItemResult) => (r.mediaItem ? r.mediaItem.baseUrl : undefined);
+class RequestCancelException extends Error {}
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
@@ -42,21 +45,19 @@ export async function activate(context: vscode.ExtensionContext) {
           description: 'command',
         },
       ];
-      const selectedAlbumTitle = await vscode.window.showQuickPick(
-        albumListResponce.then(r => [
-          ...defaltChoice,
-          ...r.map(
-            (a): vscode.QuickPickItem => ({
-              label: a.title,
-              description: `Contents: ${a.mediaItemsCount}`,
-            })
-          ),
-        ]),
-        {
-          placeHolder: 'Please select the album where you want to add',
-          ignoreFocusOut: true,
-        }
-      );
+      const albumList = albumListResponce.then(r => [
+        ...defaltChoice,
+        ...r.map(
+          (a): vscode.QuickPickItem => ({
+            label: a.title,
+            description: `Contents: ${a.mediaItemsCount}`,
+          })
+        ),
+      ]);
+      const selectedAlbumTitle = await vscode.window.showQuickPick(albumList, {
+        placeHolder: 'Please select the album where you want to add',
+        ignoreFocusOut: true,
+      });
       let albumId: string | undefined = undefined;
       if (selectedAlbumTitle) {
         switch (selectedAlbumTitle.label) {
@@ -84,35 +85,52 @@ export async function activate(context: vscode.ExtensionContext) {
         }
         const selectedTabFilePath = vscode.window.activeTextEditor.document.fileName;
         const dir = path.dirname(selectedTabFilePath);
-        const imgPath = path.resolve(dir, 'IE.jpg');
-        const tokens = await vscode.window.withProgress(
-          {
-            cancellable: false,
-            title: 'uploading images...',
-            location: vscode.ProgressLocation.Notification,
+        const tokenGetters: Array<Promise<[string, string]>> = [];
+        let urls: (string | undefined)[] = [];
+        const replaced = await markdownImgUrlEditor(
+          text,
+          (alt: string, s: string) => {
+            const index = tokenGetters.push(photos.upload(path.resolve(dir, s)).then(t => [alt, t])) - 1;
+            return () => urls[index] || s;
           },
-          () => photos.uploadAll([imgPath])
-        );
-        const res = await photos.mediaItems.batchCreate({
-          albumId: albumId,
-          newMediaItems: tokens.map(
-            (t): Photos.NewMediaItem => ({
-              simpleMediaItem: {
-                uploadToken: t,
+          async () => {
+            //TODO: cancelを実装する
+            const tokens = await vscode.window.withProgress(
+              {
+                cancellable: false,
+                title: 'uploading images...',
+                location: vscode.ProgressLocation.Notification,
               },
-              description: 'hoge',
-            })
-          ),
-        });
-        const ids = res
-          .map(r => (r.mediaItem ? r.mediaItem.id : undefined))
-          .filter(id => !(undefined === id)) as string[];
-        const res2 = await photos.mediaItems.batchGet(ids);
-        for (const r of res2) {
-          if (r.mediaItem) {
-            console.log(`r.mediaItem.baseUrl: ${r.mediaItem.baseUrl}`);
+              () => Promise.all(tokenGetters)
+            );
+            const res = await photos.mediaItems.batchCreate({
+              albumId: albumId,
+              newMediaItems: tokens.map(
+                (t): Photos.NewMediaItem => ({
+                  simpleMediaItem: {
+                    uploadToken: t[1],
+                  },
+                  description: t[0],
+                })
+              ),
+            });
+            const ids = res.map(r => (r.mediaItem ? r.mediaItem.id : undefined));
+            //The mediaItems info batchCreate return lacks baseUrl so that we need to get again using batchGet
+            const res2 = await photos.mediaItems.batchGet(ids.filter(id => !(undefined === id)) as string[]);
+            let i = 0;
+            urls = ids.map(id => (id ? getUrl(res2[i++]) : undefined));
           }
-        }
+        );
+        textEditor.edit(builder => {
+          builder.replace(allRange, replaced);
+        });
+      }
+    } catch (er) {
+      if (er instanceof RequestCancelException) {
+        //do nothing.
+      } else {
+        controller.abort();
+        throw er;
       }
     } finally {
       activeEditorLock.dispose();
