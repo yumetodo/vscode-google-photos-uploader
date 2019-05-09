@@ -9,12 +9,14 @@ import AbortController from 'abort-controller';
 import { markdownImgUrlEditor } from 'markdown_img_url_editor';
 // const promises: Promise<any>[] = [];
 const getUrl = (r: Photos.MediaItemResult) => (r.mediaItem ? r.mediaItem.baseUrl : undefined);
-class RequestCancelException extends Error {}
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
   const configuration = new Configuration();
   const controller = new AbortController();
+  const onCancellationRequested = () => {
+    controller.abort();
+  };
   const authManager = await AuthManager.init(configuration, controller);
   const photos = new Photos(authManager);
   // The command has been defined in the package.json file
@@ -25,9 +27,7 @@ export async function activate(context: vscode.ExtensionContext) {
       vscode.window.showErrorMessage('Please open target markdown text file.');
       return;
     }
-    const activeEditorLock = vscode.window.onDidChangeActiveTextEditor(e => {
-      controller.abort();
-    });
+    const activeEditorLock = vscode.window.onDidChangeActiveTextEditor(onCancellationRequested);
     try {
       const textEditor = vscode.window.activeTextEditor;
       const text = textEditor.document.getText();
@@ -97,11 +97,14 @@ export async function activate(context: vscode.ExtensionContext) {
             //TODO: cancelを実装する
             const tokens = await vscode.window.withProgress(
               {
-                cancellable: false,
+                cancellable: true,
                 title: 'uploading images...',
                 location: vscode.ProgressLocation.Notification,
               },
-              () => Promise.all(tokenGetters)
+              (_, token) => {
+                token.onCancellationRequested(onCancellationRequested);
+                return Promise.all(tokenGetters);
+              }
             );
             const res = await photos.mediaItems.batchCreate({
               albumId: albumId,
@@ -126,9 +129,7 @@ export async function activate(context: vscode.ExtensionContext) {
         });
       }
     } catch (er) {
-      if (er instanceof RequestCancelException) {
-        //do nothing.
-      } else {
+      if (!(er instanceof Error && er.name === 'AbortError')) {
         controller.abort();
         throw er;
       }
