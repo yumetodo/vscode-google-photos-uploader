@@ -94,7 +94,6 @@ export async function activate(context: vscode.ExtensionContext) {
             return () => urls[index] || s;
           },
           async () => {
-            //TODO: cancelを実装する
             const tokens = await vscode.window.withProgress(
               {
                 cancellable: true,
