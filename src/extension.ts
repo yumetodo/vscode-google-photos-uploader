@@ -1,5 +1,3 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { Configuration } from './configuration';
@@ -7,7 +5,6 @@ import { AuthManager } from './authManager';
 import { Photos } from './googlePhotos';
 import AbortController from 'abort-controller';
 import { markdownImgUrlEditor } from 'markdown_img_url_editor';
-// const promises: Promise<any>[] = [];
 const getUrl = (r: Photos.MediaItemResult) => (r.mediaItem ? r.mediaItem.baseUrl : undefined);
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -22,7 +19,7 @@ export async function activate(context: vscode.ExtensionContext) {
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
-  let disposable = vscode.commands.registerCommand('extension.helloWorld', async () => {
+  let disposable = vscode.commands.registerCommand('google-photos-uploader.upload', async () => {
     if (!vscode.window.activeTextEditor) {
       vscode.window.showErrorMessage('Please open target markdown text file.');
       return;

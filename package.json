@@ -12,7 +12,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.helloWorld"
+		"onCommand:google-photos-uploader.upload"
 	],
 	"repository": {
 		"type": "git",
@@ -22,8 +22,8 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.helloWorld",
-				"title": "Hello World"
+				"command": "google-photos-uploader.upload",
+				"title": "google-photos-uploader: Upload image and replace"
 			}
 		],
 		"configuration": [
