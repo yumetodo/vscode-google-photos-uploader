@@ -1,65 +1,68 @@
-# google-photos-uploader README
+# google-photos-uploader
 
-This is the README for your extension "google-photos-uploader". After writing up a brief description, we recommend including the following sections.
+This extension just provides `google-photos-uploader: Upload image and replace` command.
 
-## Features
+The command will do all the step shown below:
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+1. extract img path from your **markdown** text
+2. upload to [Google Photos](https://www.google.com/photos/about/)
+3. replace img path to Google Photos published url
 
-For example if there is an image subfolder under your extension project workspace:
+![select_upload](images/select_upload.gif)
 
-\!\[feature X\]\(images/feature-x.png\)
+## How to use
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+### Run command
 
-## Requirements
+Open command palet(`Ctrl`+`Shift`+`P`), find `google-photos-uploader: Upload image and replace` command and execute.
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+![run command](images/first&#32;step.png)
 
-## Extension Settings
+### (OAuth)
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+This plugin sometimes request you OAuth Authentication.
 
-For example:
+In this case, default browser will be started.
 
-This extension contributes the following settings:
+1. Select Google acount and login  
+![oauth_select_account](images/oauth_select_account.png)
+2. Authorize these parmissions  
+![oauth_parmission_1](images/oauth_parmission_1.png)  
+![oauth_parmission_2](images/oauth_parmission_2.png)
+3. Authorize these parmissions again!(I don't know why authorize phase are duplicated)  
+![oauth_parmission_3](images/oauth_parmission_3.png)
+4. Copy auth token(DO NOT TELL THIS TO OTHER PEOPLE)  
+![oauth_parmission_4](images/oauth_parmission_4.png)
+5. Go back to vscode. Then, paste auto token.  
+![oauth_parmission_5](images/oauth_parmission_5.png)  
+![oauth_parmission_6](images/oauth_parmission_6.png)
 
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+## Select Album
 
-## Known Issues
+Because of Google Photos API limitation, albums you can add photos must be created by this plugin.
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+So, you have 3 choices to upload images.
 
-## Release Notes
+1. I don't want to add photos to albums: not tested
+2. create a new album
+3. select album already created by this plugin
 
-Users appreciate release notes as you update your extension.
+![select album](images/select&#32;album.png)
 
-### 1.0.0
+When you chose `create a new album`, you need to specify the new album name.
 
-Initial release of ...
+![create album](images/create&#32;album.png)
 
-### 1.0.1
+## Please wait for seconds
 
-Fixed issue #.
+On this phase, this plugin executes below:
 
-### 1.1.0
+1. extract image path
+2. upload image (depend on the total image size and your traffic speed, showing progress info)
+3. register images to the album
+4. get published image URL
+5. replace image path to the URL
 
-Added features X, Y, and Z.
+![uploading](images/uploading.png)
 
------------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+![select_upload](images/select_upload.gif)
