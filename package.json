@@ -8,6 +8,8 @@
 	},
 	"author": "yumetodo",
 	"license": "BSL-1.0",
+	"publisher": "yumetodo",
+	"icon": "images/icon.png",
 	"categories": [
 		"Other"
 	],

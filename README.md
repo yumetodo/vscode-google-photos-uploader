@@ -1,5 +1,7 @@
 # google-photos-uploader
 
+![icon](images/icon.png)
+
 This extension just provides `google-photos-uploader: Upload image and replace` command.
 
 The command will do all the step shown below:
