@@ -20,6 +20,14 @@
 	},
 	"main": "./out/extension.js",
 	"contributes": {
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "google-photos-uploader.upload",
+					"when": "editorLangId == markdown"
+				}
+			]
+		},
 		"commands": [
 			{
 				"command": "google-photos-uploader.upload",
