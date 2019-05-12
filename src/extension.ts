@@ -34,11 +34,11 @@ export async function activate(context: vscode.ExtensionContext) {
       const albumListResponce = photos.albums.listAll(true);
       const defaltChoice: vscode.QuickPickItem[] = [
         {
-          label: `I don't want to add photos to album`,
+          label: `I don't want to add photos to albums`,
           description: 'command',
         },
         {
-          label: 'Create new album',
+          label: 'Create a new album',
           description: 'command',
         },
       ];
@@ -58,9 +58,9 @@ export async function activate(context: vscode.ExtensionContext) {
       let albumId: string | undefined = undefined;
       if (selectedAlbumTitle) {
         switch (selectedAlbumTitle.label) {
-          case `I don't want to add photos to album`:
+          case `I don't want to add photos to albums`:
             break;
-          case 'Create new album':
+          case 'Create a new album':
             {
               const title = await vscode.window.showInputBox({
                 placeHolder: 'What is a new album name?',
