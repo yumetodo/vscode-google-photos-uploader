@@ -68,3 +68,7 @@ On this phase, this plugin executes below:
 ![uploading](images/uploading.png)
 
 ![select_upload](images/select_upload.gif)
+
+## Known Issue
+
+Image syntax written in code blocks in lists will also be replaced due to markdown parse bug in [`markdown_img_url_editor`](https://github.com/yumetodo/markdown_img_url_editor).
