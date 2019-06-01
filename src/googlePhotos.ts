@@ -2,6 +2,7 @@ import { AuthManager } from './authManager';
 import * as fs from 'fs';
 import * as path from 'path';
 import { GaxiosOptions } from 'gaxios';
+import { escape } from 'querystring';
 export class Photos {
   albums: Photos.Albums;
   mediaItems: Photos.MediaItems;
@@ -18,7 +19,7 @@ export class Photos {
         url: 'https://photoslibrary.googleapis.com/v1/uploads',
         headers: {
           'Content-type': 'application/octet-stream',
-          'X-Goog-Upload-File-Name': path.basename(filepath),
+          'X-Goog-Upload-File-Name': escape(path.basename(filepath)),
           'X-Goog-Upload-Protocol': 'raw',
         },
         data: fs.createReadStream(filepath),
