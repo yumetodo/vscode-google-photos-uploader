@@ -10,11 +10,7 @@ const getUrl = (r: Photos.MediaItemResult) => (r.mediaItem ? r.mediaItem.baseUrl
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
   const configuration = new Configuration();
-  const controller = new AbortController();
-  const onCancellationRequested = () => {
-    controller.abort();
-  };
-  const authManager = await AuthManager.init(configuration, controller);
+  const authManager = await AuthManager.init(configuration);
   const photos = new Photos(authManager);
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
@@ -24,6 +20,12 @@ export async function activate(context: vscode.ExtensionContext) {
       vscode.window.showErrorMessage('Please open target markdown text file.');
       return;
     }
+    const AbortControllerMap = new Map<string, AbortController>();
+    const onCancellationRequested = () => {
+      for (const c of AbortControllerMap.values()) {
+        c.abort();
+      }
+    };
     const activeEditorLock = vscode.window.onDidChangeActiveTextEditor(onCancellationRequested);
     try {
       const textEditor = vscode.window.activeTextEditor;
@@ -31,7 +33,9 @@ export async function activate(context: vscode.ExtensionContext) {
       const startPos = textEditor.document.positionAt(0);
       const endPos = textEditor.document.positionAt(text.length);
       const allRange = new vscode.Range(startPos, endPos);
-      const albumListResponce = photos.albums.listAll(true);
+      const listAllAbortController = new AbortController();
+      AbortControllerMap.set('listAll', listAllAbortController);
+      const albumListResponce = photos.albums.listAll(listAllAbortController.signal, true);
       const defaltChoice: vscode.QuickPickItem[] = [
         {
           label: `I don't want to add photos to albums`,
@@ -42,7 +46,9 @@ export async function activate(context: vscode.ExtensionContext) {
           description: 'command',
         },
       ];
-      const albumList = albumListResponce.then(r => [
+      const albumList = albumListResponce.then(r => {
+        AbortControllerMap.delete('listAll');
+        return [
         ...defaltChoice,
         ...r.map(
           (a): vscode.QuickPickItem => ({
@@ -50,7 +56,8 @@ export async function activate(context: vscode.ExtensionContext) {
             description: `Contents: ${a.mediaItemsCount}`,
           })
         ),
-      ]);
+        ];
+      });
       const selectedAlbumTitle = await vscode.window.showQuickPick(albumList, {
         placeHolder: 'Please select the album where you want to add',
         ignoreFocusOut: true,
@@ -68,7 +75,13 @@ export async function activate(context: vscode.ExtensionContext) {
                 validateInput: value => (defaltChoice.find(v => v.label === value) ? 'It is reserved' : null),
               });
               if (title) {
-                const allbum = await photos.albums.create({ album: { title: title } });
+                const albumCreateAbortController = new AbortController();
+                AbortControllerMap.set('album create', albumCreateAbortController);
+                const allbum = await photos.albums.create(
+                  { album: { title: title } },
+                  albumCreateAbortController.signal
+                );
+                AbortControllerMap.delete('album create');
                 albumId = allbum.id;
               }
             }
@@ -102,7 +115,10 @@ export async function activate(context: vscode.ExtensionContext) {
                 return Promise.all(tokenGetters);
               }
             );
-            const res = await photos.mediaItems.batchCreate({
+            const batchCreateAbortController = new AbortController();
+            AbortControllerMap.set('batchCreate', batchCreateAbortController);
+            const res = await photos.mediaItems.batchCreate(
+              {
               albumId: albumId,
               newMediaItems: tokens.map(
                 (t): Photos.NewMediaItem => ({
@@ -112,10 +128,19 @@ export async function activate(context: vscode.ExtensionContext) {
                   description: t[0],
                 })
               ),
-            });
+              },
+              batchCreateAbortController.signal
+            );
+            AbortControllerMap.delete('batchCreate');
             const ids = res.map(r => (r.mediaItem ? r.mediaItem.id : undefined));
+            const batchGetAbortController = new AbortController();
+            AbortControllerMap.set('batchGet', batchGetAbortController);
             //The mediaItems info batchCreate return lacks baseUrl so that we need to get again using batchGet
-            const res2 = await photos.mediaItems.batchGet(ids.filter(id => !(undefined === id)) as string[]);
+            const res2 = await photos.mediaItems.batchGet(
+              ids.filter((id: string | undefined): id is string => !(undefined === id)),
+              batchGetAbortController.signal
+            );
+            AbortControllerMap.delete('batchGet');
             let i = 0;
             urls = ids.map(id => (id ? getUrl(res2[i++]) : undefined));
           }
@@ -126,7 +151,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
     } catch (er) {
       if (!(er instanceof Error && er.name === 'AbortError')) {
-        controller.abort();
+        onCancellationRequested();
         throw er;
       }
     } finally {

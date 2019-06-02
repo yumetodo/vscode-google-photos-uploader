@@ -27,10 +27,8 @@ const scopes = [SCOPES.READ_AND_APPEND];
 export class AuthManager {
   private configuration: Configuration;
   private oauth2Client: OAuth2Client;
-  private controller: AbortController;
-  private constructor(configuration: Configuration, controller: AbortController) {
+  private constructor(configuration: Configuration) {
     this.configuration = configuration;
-    this.controller = controller;
     this.oauth2Client = new google.auth.OAuth2(
       clientInfo.installed.client_id,
       clientInfo.installed.client_secret,
@@ -53,8 +51,8 @@ export class AuthManager {
       }
     });
   }
-  static async init(configuration: Configuration, controller: AbortController) {
-    const re = new AuthManager(configuration, controller);
+  static async init(configuration: Configuration) {
+    const re = new AuthManager(configuration);
     if (!(await re.checkTokensIsValid().catch(() => false))) {
       await re.firstTimeAuth();
     }
@@ -91,7 +89,6 @@ export class AuthManager {
     }
   }
   async request<T = any>(opts: GaxiosOptions): Promise<GaxiosResponse<T>> {
-    opts.signal = opts.signal || this.controller.signal;
     return this.oauth2Client.request(opts);
   }
   private async checkTokensIsValid(): Promise<boolean> {

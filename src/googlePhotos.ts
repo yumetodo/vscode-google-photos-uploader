@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { GaxiosOptions } from 'gaxios';
 import { escape } from 'querystring';
+import { AbortSignal } from 'abort-controller';
 export class Photos {
   albums: Photos.Albums;
   mediaItems: Photos.MediaItems;
@@ -12,7 +13,7 @@ export class Photos {
     this.albums = new Photos.Albums(authManager);
     this.mediaItems = new Photos.MediaItems(authManager);
   }
-  async upload(filepath: string): Promise<string> {
+  async upload(filepath: string, signal: AbortSignal): Promise<string> {
     return this.authManager
       .request<string>({
         method: 'POST',
@@ -25,11 +26,9 @@ export class Photos {
         data: fs.createReadStream(filepath),
         responseType: 'text',
         validateStatus: status => status >= 200 && status < 300,
+        signal: signal,
       })
       .then(r => r.data);
-  }
-  async uploadAll(filepath: string[]): Promise<string[]> {
-    return Promise.all(filepath.map(f => this.upload(f)));
   }
 }
 export namespace Photos {
@@ -201,17 +200,18 @@ export namespace Photos {
     constructor(authManager: AuthManager) {
       this.authManager = authManager;
     }
-    async create(body: Albums.CreateBody) {
+    async create(body: Albums.CreateBody, signal: AbortSignal) {
       return this.authManager
         .request<OutputonlyAlbum>({
           method: 'POST',
           url: 'https://photoslibrary.googleapis.com/v1/albums',
           validateStatus: status => status >= 200 && status < 300,
           body: JSON.stringify(body),
+          signal: signal,
         })
         .then(a => a.data);
     }
-    async listAll(excludeNonAppCreatedData: boolean = false): Promise<OutputonlyAlbum[]> {
+    async listAll(signal: AbortSignal, excludeNonAppCreatedData: boolean = false): Promise<OutputonlyAlbum[]> {
       let re: OutputonlyAlbum[] = [];
       let responce: Albums.ListResponce;
       let opt: Albums.ListOptions = {
@@ -222,6 +222,7 @@ export namespace Photos {
           pageSize: 50,
           excludeNonAppCreatedData: excludeNonAppCreatedData,
         },
+        signal: signal,
       };
       while (true) {
         responce = await this.authManager.request<Albums.ListResponce>(opt).then(a => a.data);
@@ -261,18 +262,17 @@ export namespace Photos {
     constructor(authManager: AuthManager) {
       this.authManager = authManager;
     }
-    async batchCreate(body: Readonly<MediaItems.BatchCreateBody>): Promise<NewMediaItemResult[]> {
-      return this.authManager
+    async batchCreate(b: Readonly<MediaItems.BatchCreateBody>, signal: AbortSignal): Promise<NewMediaItemResult[]> {
         .request<MediaItems.BatchCreateResponce>({
           method: 'POST',
           url: 'https://photoslibrary.googleapis.com/v1/mediaItems:batchCreate',
           validateStatus: status => status >= 200 && status < 300,
           body: JSON.stringify(body),
+            signal: signal,
         })
         .then(r => r.data.newMediaItemResults);
     }
-    async batchGet(mediaItemIds: string[]): Promise<MediaItemResult[]> {
-      return this.authManager
+    async batchGet(mediaItemIds: string[], signal: AbortSignal): Promise<MediaItemResult[]> {
         .request<MediaItems.BatchGetResponce>({
           method: 'GET',
           url: 'https://photoslibrary.googleapis.com/v1/mediaItems:batchGet',
@@ -280,12 +280,13 @@ export namespace Photos {
           params: {
             mediaItemIds: mediaItemIds,
           },
+            signal: signal,
         })
         .then(r => r.data.mediaItemResults);
     }
-    async searchAll(albumId: string): Promise<MediaItem[]>;
-    async searchAll(filters: Filters): Promise<MediaItem[]>;
-    async searchAll(b: string | Filters) {
+    async searchAll(albumId: string, signal: AbortSignal): Promise<MediaItem[]>;
+    async searchAll(filters: Filters, signal: AbortSignal): Promise<MediaItem[]>;
+    async searchAll(b: string | Filters, signal: AbortSignal) {
       let re: MediaItem[] = [];
       let responce: MediaItems.SearchResponce;
       let opt: MediaItems.SearchOptions = {
@@ -295,6 +296,7 @@ export namespace Photos {
         body: {
           pageSize: 100,
         },
+        signal: signal,
       };
       if (opt.body) {
         if (typeof b === 'string') {
