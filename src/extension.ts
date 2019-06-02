@@ -140,19 +140,27 @@ export async function activate(context: vscode.ExtensionContext) {
             );
             const batchCreateAbortController = new AbortController();
             AbortControllerMap.set('batchCreate', batchCreateAbortController);
-            const res = await photos.mediaItems.batchCreate(
+            const res = await vscode.window.withProgress(
               {
-                albumId: albumId,
-                newMediaItems: tokens.map(
-                  (t): Photos.NewMediaItem => ({
-                    simpleMediaItem: {
-                      uploadToken: t[1],
-                    },
-                    description: t[0],
-                  })
-                ),
+                cancellable: false,
+                title: 'registering images...',
+                location: vscode.ProgressLocation.Notification,
               },
-              batchCreateAbortController.signal
+              () =>
+                photos.mediaItems.batchCreate(
+                  {
+                    albumId: albumId,
+                    newMediaItems: tokens.map(
+                      (t): Photos.NewMediaItem => ({
+                        simpleMediaItem: {
+                          uploadToken: t[1],
+                        },
+                        description: t[0],
+                      })
+                    ),
+                  },
+                  batchCreateAbortController.signal
+                )
             );
             AbortControllerMap.delete('batchCreate');
             const ids = res.map(r => (r.mediaItem ? r.mediaItem.id : undefined));
