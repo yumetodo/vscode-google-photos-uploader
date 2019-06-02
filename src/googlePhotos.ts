@@ -263,6 +263,12 @@ export namespace Photos {
       this.authManager = authManager;
     }
     async batchCreate(b: Readonly<MediaItems.BatchCreateBody>, signal: AbortSignal): Promise<NewMediaItemResult[]> {
+      let re: NewMediaItemResult[] = [];
+      let body = { ...b };
+      const newMediaItemLimitPerRequest = 50;
+      for (let i = 0; i < b.newMediaItems.length; i += newMediaItemLimitPerRequest) {
+        body.newMediaItems = b.newMediaItems.slice(i, i + newMediaItemLimitPerRequest);
+        const r = await this.authManager
         .request<MediaItems.BatchCreateResponce>({
           method: 'POST',
           url: 'https://photoslibrary.googleapis.com/v1/mediaItems:batchCreate',
@@ -270,19 +276,41 @@ export namespace Photos {
           body: JSON.stringify(body),
             signal: signal,
         })
+          .catch(er => {
+            if (er instanceof Error && body.albumId) {
+              er.message += `\nfrom Photos.MediaItems.batchCreate\nalbumId: ${body.albumId}`;
+            }
+            throw er;
+          })
         .then(r => r.data.newMediaItemResults);
+        re = [...re, ...r];
+    }
+      return re;
     }
     async batchGet(mediaItemIds: string[], signal: AbortSignal): Promise<MediaItemResult[]> {
+      let re: MediaItemResult[] = [];
+      const mediaItemIdsLimitPerRequest = 50;
+      for (let i = 0; i < mediaItemIds.length; i += mediaItemIdsLimitPerRequest) {
+        const r = await this.authManager
         .request<MediaItems.BatchGetResponce>({
           method: 'GET',
           url: 'https://photoslibrary.googleapis.com/v1/mediaItems:batchGet',
           validateStatus: status => status >= 200 && status < 300,
           params: {
-            mediaItemIds: mediaItemIds,
+              mediaItemIds: mediaItemIds.slice(i, i + mediaItemIdsLimitPerRequest),
           },
             signal: signal,
         })
+          .catch(er => {
+            if (er instanceof Error) {
+              er.message += '\nfrom Photos.MediaItems.batchCreate';
+            }
+            throw er;
+          })
         .then(r => r.data.mediaItemResults);
+        re = [...re, ...r];
+      }
+      return re;
     }
     async searchAll(albumId: string, signal: AbortSignal): Promise<MediaItem[]>;
     async searchAll(filters: Filters, signal: AbortSignal): Promise<MediaItem[]>;
