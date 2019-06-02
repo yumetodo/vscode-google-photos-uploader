@@ -49,13 +49,13 @@ export async function activate(context: vscode.ExtensionContext) {
       const albumList = albumListResponce.then(r => {
         AbortControllerMap.delete('listAll');
         return [
-        ...defaltChoice,
-        ...r.map(
-          (a): vscode.QuickPickItem => ({
-            label: a.title,
-            description: `Contents: ${a.mediaItemsCount}`,
-          })
-        ),
+          ...defaltChoice,
+          ...r.map(
+            (a): vscode.QuickPickItem => ({
+              label: a.title,
+              description: `Contents: ${a.mediaItemsCount}`,
+            })
+          ),
         ];
       });
       const selectedAlbumTitle = await vscode.window.showQuickPick(albumList, {
@@ -96,12 +96,30 @@ export async function activate(context: vscode.ExtensionContext) {
         const selectedTabFilePath = vscode.window.activeTextEditor.document.fileName;
         const dir = path.dirname(selectedTabFilePath);
         const tokenGetters: Array<Promise<[string, string]>> = [];
+        const uploadingImagePath = new Map<string, number>();
         let urls: (string | undefined)[] = [];
         const replaced = await markdownImgUrlEditor(
           text,
           (alt: string, s: string) => {
-            const index = tokenGetters.push(photos.upload(path.resolve(dir, s)).then(t => [alt, t])) - 1;
-            return () => urls[index] || s;
+            const p = path.resolve(dir, s);
+            //avoid duplicate upload
+            if (uploadingImagePath.has(p)) {
+              const index = uploadingImagePath.get(p);
+              return () => (index ? urls[index] || s : s);
+            } else {
+              const k = `upload::${p}`;
+              const c = new AbortController();
+              AbortControllerMap.set(k, c);
+              const index =
+                tokenGetters.push(
+                  photos.upload(p, c.signal).then(t => {
+                    AbortControllerMap.delete(k);
+                    return [alt, t];
+                  })
+                ) - 1;
+              uploadingImagePath.set(p, index);
+              return () => urls[index] || s;
+            }
           },
           async () => {
             const tokens = await vscode.window.withProgress(
@@ -119,15 +137,15 @@ export async function activate(context: vscode.ExtensionContext) {
             AbortControllerMap.set('batchCreate', batchCreateAbortController);
             const res = await photos.mediaItems.batchCreate(
               {
-              albumId: albumId,
-              newMediaItems: tokens.map(
-                (t): Photos.NewMediaItem => ({
-                  simpleMediaItem: {
-                    uploadToken: t[1],
-                  },
-                  description: t[0],
-                })
-              ),
+                albumId: albumId,
+                newMediaItems: tokens.map(
+                  (t): Photos.NewMediaItem => ({
+                    simpleMediaItem: {
+                      uploadToken: t[1],
+                    },
+                    description: t[0],
+                  })
+                ),
               },
               batchCreateAbortController.signal
             );
