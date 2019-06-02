@@ -89,6 +89,10 @@ export class AuthManager {
     }
   }
   async request<T = any>(opts: GaxiosOptions): Promise<GaxiosResponse<T>> {
+    opts.retryConfig = opts.retryConfig || {};
+    opts.retryConfig.retry = 4;
+    opts.retryConfig.retryDelay = 1000;
+    opts.retry = true;
     return this.oauth2Client.request(opts);
   }
   private async checkTokensIsValid(): Promise<boolean> {

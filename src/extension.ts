@@ -5,6 +5,7 @@ import { AuthManager } from './authManager';
 import { Photos } from './googlePhotos';
 import AbortController from 'abort-controller';
 import { markdownImgUrlEditor } from 'markdown_img_url_editor';
+import { waitFor } from './timer';
 const getUrl = (r: Photos.MediaItemResult) => (r.mediaItem ? r.mediaItem.baseUrl : undefined);
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -98,6 +99,7 @@ export async function activate(context: vscode.ExtensionContext) {
         const tokenGetters: Array<Promise<[string, string]>> = [];
         const uploadingImagePath = new Map<string, number>();
         let urls: (string | undefined)[] = [];
+        let timer = waitFor(1);
         const replaced = await markdownImgUrlEditor(
           text,
           (alt: string, s: string) => {
@@ -112,10 +114,13 @@ export async function activate(context: vscode.ExtensionContext) {
               AbortControllerMap.set(k, c);
               const index =
                 tokenGetters.push(
-                  photos.upload(p, c.signal).then(t => {
-                    AbortControllerMap.delete(k);
-                    return [alt, t];
-                  })
+                  timer
+                    .then(_ => photos.upload(p, c.signal))
+                    .then(t => {
+                      timer = waitFor(300);
+                      AbortControllerMap.delete(k);
+                      return [alt, t];
+                    })
                 ) - 1;
               uploadingImagePath.set(p, index);
               return () => urls[index] || s;
