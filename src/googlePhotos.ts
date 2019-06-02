@@ -28,6 +28,12 @@ export class Photos {
         validateStatus: status => status >= 200 && status < 300,
         signal: signal,
       })
+      .catch(er => {
+        if (er instanceof Error) {
+          er.message += `\nfile: ${filepath}`;
+        }
+        throw er;
+      })
       .then(r => r.data);
   }
 }
@@ -209,6 +215,12 @@ export namespace Photos {
           body: JSON.stringify(body),
           signal: signal,
         })
+        .catch(er => {
+          if (er instanceof Error) {
+            er.message += `\nfrom Photos.Albums.create\ntitle: ${body.album.title}`;
+          }
+          throw er;
+        })
         .then(a => a.data);
     }
     async listAll(signal: AbortSignal, excludeNonAppCreatedData: boolean = false): Promise<OutputonlyAlbum[]> {
@@ -269,22 +281,22 @@ export namespace Photos {
       for (let i = 0; i < b.newMediaItems.length; i += newMediaItemLimitPerRequest) {
         body.newMediaItems = b.newMediaItems.slice(i, i + newMediaItemLimitPerRequest);
         const r = await this.authManager
-        .request<MediaItems.BatchCreateResponce>({
-          method: 'POST',
-          url: 'https://photoslibrary.googleapis.com/v1/mediaItems:batchCreate',
-          validateStatus: status => status >= 200 && status < 300,
-          body: JSON.stringify(body),
+          .request<MediaItems.BatchCreateResponce>({
+            method: 'POST',
+            url: 'https://photoslibrary.googleapis.com/v1/mediaItems:batchCreate',
+            validateStatus: status => status >= 200 && status < 300,
+            body: JSON.stringify(body),
             signal: signal,
-        })
+          })
           .catch(er => {
             if (er instanceof Error && body.albumId) {
               er.message += `\nfrom Photos.MediaItems.batchCreate\nalbumId: ${body.albumId}`;
             }
             throw er;
           })
-        .then(r => r.data.newMediaItemResults);
+          .then(r => r.data.newMediaItemResults);
         re = [...re, ...r];
-    }
+      }
       return re;
     }
     async batchGet(mediaItemIds: string[], signal: AbortSignal): Promise<MediaItemResult[]> {
@@ -292,22 +304,22 @@ export namespace Photos {
       const mediaItemIdsLimitPerRequest = 50;
       for (let i = 0; i < mediaItemIds.length; i += mediaItemIdsLimitPerRequest) {
         const r = await this.authManager
-        .request<MediaItems.BatchGetResponce>({
-          method: 'GET',
-          url: 'https://photoslibrary.googleapis.com/v1/mediaItems:batchGet',
-          validateStatus: status => status >= 200 && status < 300,
-          params: {
+          .request<MediaItems.BatchGetResponce>({
+            method: 'GET',
+            url: 'https://photoslibrary.googleapis.com/v1/mediaItems:batchGet',
+            validateStatus: status => status >= 200 && status < 300,
+            params: {
               mediaItemIds: mediaItemIds.slice(i, i + mediaItemIdsLimitPerRequest),
-          },
+            },
             signal: signal,
-        })
+          })
           .catch(er => {
             if (er instanceof Error) {
               er.message += '\nfrom Photos.MediaItems.batchCreate';
             }
             throw er;
           })
-        .then(r => r.data.mediaItemResults);
+          .then(r => r.data.mediaItemResults);
         re = [...re, ...r];
       }
       return re;
