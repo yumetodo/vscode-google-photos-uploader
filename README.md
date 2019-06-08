@@ -12,6 +12,10 @@ The command will do all the step shown below:
 
 ![select_upload](images/select_upload.gif)
 
+## CAUTION!
+
+Currently, to get img url, we are using [`baseUrl` that is valid **only for 60 minutes**](https://developers.google.com/photos/library/guides/access-media-items#base-urls). **DO NOT USE THIS PLUGIN UNTIL THIS BUG IS TO BE FIXED**.
+
 ## How to use
 
 ### Run command
