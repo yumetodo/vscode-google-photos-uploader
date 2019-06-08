@@ -17,6 +17,16 @@ export async function activate(context: vscode.ExtensionContext) {
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
   let disposable = vscode.commands.registerCommand('google-photos-uploader.upload', async () => {
+    vscode.window.showErrorMessage(
+      'Currently, to get img url, we are using `baseUrl` that is valid **only for 60 minutes**',
+      'DO NOT USE THIS PLUGIN UNTIL THIS BUG IS TO BE FIXED'
+    );
+    const continueFlag = await vscode.window.showQuickPick(['YES(NOT RECOMMENDED'], {
+      placeHolder: 'Are you really continue process?',
+    });
+    if (!continueFlag || continueFlag !== 'YES(NOT RECOMMENDED') {
+      return;
+    }
     if (!vscode.window.activeTextEditor) {
       vscode.window.showErrorMessage('Please open target markdown text file.');
       return;
