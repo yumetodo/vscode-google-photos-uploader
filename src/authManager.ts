@@ -1,9 +1,11 @@
 import * as vscode from 'vscode';
-import { Configuration } from './configuration';
 import { google } from 'googleapis';
 import { OAuth2Client } from 'googleapis-common';
 import { GaxiosOptions, GaxiosResponse } from 'gaxios';
-import AbortController from 'abort-controller';
+import { getPortPromise } from 'portfinder';
+import { Configuration } from './configuration';
+import { RecivingAuthorizationCodeServer } from './createRecivingAuthorizationCodeServer';
+import authorizationCodeRecivingSucsessHTML from './authorizationCodeRecivingSucsess.html';
 //ここは馬鹿にしか見えない
 const clientInfo = {
   installed: {
@@ -27,12 +29,15 @@ const scopes = [SCOPES.READ_AND_APPEND];
 export class AuthManager {
   private configuration: Configuration;
   private oauth2Client: OAuth2Client;
-  private constructor(configuration: Configuration) {
+  /** reserve port */
+  private server: RecivingAuthorizationCodeServer;
+  private constructor(configuration: Configuration, server: RecivingAuthorizationCodeServer) {
     this.configuration = configuration;
+    this.server = server;
     this.oauth2Client = new google.auth.OAuth2(
       clientInfo.installed.client_id,
       clientInfo.installed.client_secret,
-      clientInfo.installed.redirect_uris[0]
+      `http://127.0.0.1:${this.server.port}`
     );
     const access_token = this.configuration.get('access_token');
     const refresh_token = this.configuration.get('refresh_token');
@@ -52,7 +57,11 @@ export class AuthManager {
     });
   }
   static async init(configuration: Configuration) {
-    const re = new AuthManager(configuration);
+    const server = await RecivingAuthorizationCodeServer.init(
+      await getPortPromise(),
+      authorizationCodeRecivingSucsessHTML
+    );
+    const re = new AuthManager(configuration, server);
     if (!(await re.checkTokensIsValid().catch(() => false))) {
       await re.firstTimeAuth();
     }
@@ -79,14 +88,10 @@ export class AuthManager {
     }
   }
   async firstTimeAuth(): Promise<void> {
+    const getter = this.server.get();
     this.openAuthWebPage();
-    const code = await vscode.window.showInputBox({
-      placeHolder: 'paste authorization code from browser',
-      ignoreFocusOut: true,
-    });
-    if (code) {
-      await this.setAuthorizationCode(code);
-    }
+    const code = await getter;
+    this.setAuthorizationCode(code);
   }
   async request<T = any>(opts: GaxiosOptions): Promise<GaxiosResponse<T>> {
     opts.retryConfig = opts.retryConfig || {};
