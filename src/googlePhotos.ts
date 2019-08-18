@@ -251,6 +251,23 @@ export namespace Photos {
       }
       return re;
     }
+    async share(albumId: string, opt: SharedAlbumOptions, signal: AbortSignal) {
+      return this.authManager
+        .request<Albums.ShareResponce>({
+          method: 'POST',
+          url: `https://photoslibrary.googleapis.com/v1/albums/${albumId}:share`,
+          validateStatus: status => status >= 200 && status < 300,
+          body: JSON.stringify({ sharedAlbumOptions: opt }),
+          signal: signal,
+        })
+        .catch(er => {
+          if (er instanceof Error) {
+            er.message += '\nfrom Photos.Albums.share\n' + `albumId: ${albumId}, opt: ${JSON.stringify(opt)}`;
+          }
+          throw er;
+        })
+        .then(r => r.data.shareInfo);
+    }
   }
   export namespace Albums {
     export interface CreateBody {
@@ -267,6 +284,9 @@ export namespace Photos {
     }
     export interface ListOptions extends GaxiosOptions {
       params: ListParam;
+    }
+    export interface ShareResponce {
+      shareInfo: ShareInfo;
     }
   }
   export class MediaItems {
