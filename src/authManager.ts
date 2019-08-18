@@ -25,7 +25,7 @@ const SCOPES = {
   READ_AND_APPEND: 'https://www.googleapis.com/auth/photoslibrary',
   SHARING: 'https://www.googleapis.com/auth/photoslibrary.sharing',
 };
-const scopes = [SCOPES.READ_AND_APPEND];
+const scopes = [SCOPES.READ_AND_APPEND, SCOPES.SHARING];
 export class AuthManager {
   private configuration: Configuration;
   private oauth2Client: OAuth2Client;

@@ -1,12 +1,13 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { promises as fs } from 'fs';
+import AbortController from 'abort-controller';
+import { markdownImgUrlEditor } from 'markdown_img_url_editor';
 import { Configuration } from './configuration';
 import { AuthManager } from './authManager';
 import { Photos } from './googlePhotos';
-import AbortController from 'abort-controller';
-import { markdownImgUrlEditor } from 'markdown_img_url_editor';
 import { waitFor } from './timer';
-const getUrl = (r: Photos.MediaItemResult) => (r.mediaItem ? r.mediaItem.baseUrl : undefined);
+import { selectTargetAlbum } from './selectTargetAlbum';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
@@ -44,66 +45,10 @@ export async function activate(context: vscode.ExtensionContext) {
       const startPos = textEditor.document.positionAt(0);
       const endPos = textEditor.document.positionAt(text.length);
       const allRange = new vscode.Range(startPos, endPos);
-      const listAllAbortController = new AbortController();
-      AbortControllerMap.set('listAll', listAllAbortController);
-      const albumListResponce = photos.albums.listAll(listAllAbortController.signal, true);
-      const defaltChoice: vscode.QuickPickItem[] = [
-        {
-          label: `I don't want to add photos to albums`,
-          description: 'command',
-        },
-        {
-          label: 'Create a new album',
-          description: 'command',
-        },
-      ];
-      const albumList = albumListResponce.then(r => {
-        AbortControllerMap.delete('listAll');
-        return [
-          ...defaltChoice,
-          ...r.map(
-            (a): vscode.QuickPickItem => ({
-              label: a.title,
-              description: `Contents: ${a.mediaItemsCount}`,
-            })
-          ),
-        ];
-      });
-      const selectedAlbumTitle = await vscode.window.showQuickPick(albumList, {
-        placeHolder: 'Please select the album where you want to add',
-        ignoreFocusOut: true,
-      });
-      let albumId: string | undefined = undefined;
-      if (selectedAlbumTitle) {
-        switch (selectedAlbumTitle.label) {
-          case `I don't want to add photos to albums`:
-            break;
-          case 'Create a new album':
-            {
-              const title = await vscode.window.showInputBox({
-                placeHolder: 'What is a new album name?',
-                ignoreFocusOut: true,
-                validateInput: value => (defaltChoice.find(v => v.label === value) ? 'It is reserved' : null),
-              });
-              if (title) {
-                const albumCreateAbortController = new AbortController();
-                AbortControllerMap.set('album create', albumCreateAbortController);
-                const allbum = await photos.albums.create(
-                  { album: { title: title } },
-                  albumCreateAbortController.signal
-                );
-                AbortControllerMap.delete('album create');
-                albumId = allbum.id;
+      const targetAlbum = await selectTargetAlbum(AbortControllerMap, photos);
+      if (null === targetAlbum) {
+        return;
               }
-            }
-            break;
-          default:
-            {
-              const album = await albumListResponce.then(r => r.filter(a => a.title === selectedAlbumTitle.label));
-              albumId = album[0].id;
-            }
-            break;
-        }
         const selectedTabFilePath = vscode.window.activeTextEditor.document.fileName;
         const dir = path.dirname(selectedTabFilePath);
         const tokenGetters: Array<Promise<[string, string]>> = [];
