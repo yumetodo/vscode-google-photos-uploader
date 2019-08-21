@@ -4,7 +4,7 @@
 	"description": "find local image link, upload to Google Photos, and replace link",
 	"version": "1.0.3",
 	"engines": {
-		"vscode": "^1.31.0"
+		"vscode": "^1.32.0"
 	},
 	"author": "yumetodo",
 	"license": "BSL-1.0",
@@ -20,7 +20,7 @@
 		"type": "git",
 		"url": "https://github.com/yumetodo/vscode-google-photos-uploader"
 	},
-	"main": "./out/extension.js",
+	"main": "./dist/extension.js",
 	"contributes": {
 		"menus": {
 			"commandPalette": [
@@ -56,26 +56,30 @@
 		]
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"postinstall": "node ./node_modules/vscode/bin/install",
+		"vscode:prepublish": "webpack --mode production",
+		"webpack": "webpack --mode development",
+		"webpack-dev": "webpack --mode development --watch",
+		"test-compile": "tsc -p ./",
 		"lint": "tslint --project ."
 	},
 	"devDependencies": {
-		"@types/node": "^12.0.4",
+		"@types/node": "^12.7.2",
 		"prettier": "^1.17.1",
+		"raw-loader": "^3.1.0",
+		"ts-loader": "^6.0.4",
 		"tslint": "^5.17.0",
 		"tslint-plugin-prettier": "^2.0.1",
-		"typescript": "^3.5.1",
-		"vscode": "^1.1.34"
+		"typescript": "^3.5.3",
+		"vscode": "^1.1.36",
+		"webpack": "^4.39.2",
+		"webpack-cli": "^3.3.7"
 	},
 	"dependencies": {
 		"abort-controller": "^3.0.0",
 		"gaxios": "^2.0.1",
 		"google-photos-album-image-url-fetch": "^1.2.0",
-		"googleapis": "^40.0.0",
+		"googleapis": "^42.0.0",
 		"markdown_img_url_editor": "^3.2.0",
-		"portfinder": "^1.0.21"
+		"portfinder": "^1.0.23"
 	}
 }
