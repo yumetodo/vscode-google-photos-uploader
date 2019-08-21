@@ -109,9 +109,6 @@ export async function activate(context: vscode.ExtensionContext) {
                 fetchImageUrlsAbortController.signal
               );
               AbortControllerMap.delete('fetchImageUrls');
-              if (null === before) {
-                throw new Error('GooglePhotos.Album.fetchImageUrls fail');
-              }
               for (let i = 0; i < tokens.length; ++i) {
                 const t = tokens[i];
                 const timestamp = await timestamps[i];
@@ -142,7 +139,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 if (null === after) {
                   throw new Error('GooglePhotos.Album.fetchImageUrls fail');
                 }
-                let appended = GooglePhotos.Album.extractAppended(before, after);
+                let appended = null === before ? after : GooglePhotos.Album.extractAppended(before, after);
                 if (0 === appended.length) {
                   throw new Error('Unexpected behavior was occurred while registering image');
                 }
