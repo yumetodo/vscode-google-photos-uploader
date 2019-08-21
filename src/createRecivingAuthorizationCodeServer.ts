@@ -5,35 +5,40 @@ export class RecivingAuthorizationCodeServer {
   private connections: Map<string, Socket>;
   private server: Server;
   private usingPort: number;
-  private codeGetters: [(value?: string | PromiseLike<string> | undefined) => void, (reason?: any) => void][];
+  private codeGetter: [(value?: string | PromiseLike<string> | undefined) => void, (reason?: any) => void] | null;
   private constructor(port: number, serverResponceText: string, onServerListening: () => void) {
-    this.codeGetters = [];
+    this.codeGetter = null;
     this.usingPort = port;
     this.connections = new Map<string, Socket>();
     const dummyBaseURL = 'http://www.example.com';
     this.server = createServer((req, res) => {
-      const codeGetter = this.codeGetters.shift();
-      if (typeof codeGetter === 'undefined') {
+      if (null === this.codeGetter) {
+        res.statusCode = 500;
+        res.end('Server is currently not working.');
         return;
       }
-      const resolve = codeGetter[0];
-      const reject = codeGetter[1];
       if (typeof req.url === 'undefined') {
-        reject();
+        res.statusCode = 400;
+        res.end();
         return;
       }
+      const resolve = this.codeGetter[0];
+      const reject = this.codeGetter[1];
+      this.codeGetter = null;
       const u = new URL(req.url, dummyBaseURL);
       try {
-        if (u.pathname === '/oauth2callback') {
-          const code = u.searchParams.get('code');
-          if (typeof code !== 'string') {
-            reject();
-            return;
-          }
-          res.end(serverResponceText);
-          resolve(code);
+        const code = u.searchParams.get('code');
+        if (typeof code !== 'string') {
+          res.statusCode = 404;
+          res.end('Malformed authorization response.');
+          reject(`Malformed authorization response. ${u.searchParams.toString()}`);
+          return;
         }
+        res.end(serverResponceText);
+        resolve(code);
       } catch (e) {
+        res.statusCode = 404;
+        res.end();
         reject(e);
       }
     }).listen(port, onServerListening);
@@ -50,7 +55,11 @@ export class RecivingAuthorizationCodeServer {
   }
   async get() {
     return new Promise<string>((resolve, reject) => {
-      this.codeGetters.push([resolve, reject]);
+      if (null === this.codeGetter) {
+        this.codeGetter = [resolve, reject];
+      } else {
+        reject('already waiting responce.');
+      }
     });
   }
   close() {
