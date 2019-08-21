@@ -4,6 +4,7 @@ import { promises as fs } from 'fs';
 import AbortController from 'abort-controller';
 import { markdownImgUrlEditor } from 'markdown_img_url_editor';
 import { GooglePhotos } from 'google-photos-album-image-url-fetch';
+import { URL } from 'url';
 import { Configuration } from './configuration';
 import { AuthManager } from './authManager';
 import { Photos } from './googlePhotos';
@@ -146,7 +147,14 @@ export async function activate(context: vscode.ExtensionContext) {
                 if (1 < appended.length) {
                   appended = appended.filter(e => e.imageUpdateDate === timestamp);
                 }
-                re.push(1 === appended.length ? appended[0].url : undefined);
+                if (1 === appended.length) {
+                  const url = new URL(appended[0].url);
+                  url.searchParams.set('w', `${appended[0].width}`);
+                  url.searchParams.set('h', `${appended[0].height}`);
+                  re.push(url.toString());
+                } else {
+                  re.push(undefined);
+                }
                 before = after;
                 progress.report({ increment: (100 * i) / tokens.length });
               }
