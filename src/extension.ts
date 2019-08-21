@@ -99,6 +99,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 fetchImageUrlsAbortController.signal
               );
               AbortControllerMap.delete('fetchImageUrls');
+              let fetchImageUrlsTimer = waitFor(1500);
               for (let i = 0; i < tokens.length; ++i) {
                 const t = tokens[i];
                 const timestamp = await timestamps[i];
@@ -121,10 +122,12 @@ export async function activate(context: vscode.ExtensionContext) {
                 AbortControllerMap.delete('batchCreate');
                 const fetchImageUrlsAbortController = new AbortController();
                 AbortControllerMap.set('fetchImageUrls', fetchImageUrlsAbortController);
+                await fetchImageUrlsTimer;
                 const after = await GooglePhotos.Album.fetchImageUrls(
                   targetAlbum.shareableUrl,
                   fetchImageUrlsAbortController.signal
                 );
+                fetchImageUrlsTimer = waitFor(1500);
                 AbortControllerMap.delete('fetchImageUrls');
                 if (null === after) {
                   throw new Error('GooglePhotos.Album.fetchImageUrls fail');
