@@ -73,8 +73,8 @@ export class AuthManager {
       scope: scopes,
     });
   }
-  private openAuthWebPage() {
-    vscode.env.openExternal(vscode.Uri.parse(this.createAuthUrl()));
+  private async openAuthWebPage() {
+    return vscode.env.openExternal(vscode.Uri.parse(this.createAuthUrl()));
   }
   private async setAuthorizationCode(code: string): Promise<void> {
     const { tokens } = await this.oauth2Client.getToken(code);
@@ -89,9 +89,11 @@ export class AuthManager {
   }
   async firstTimeAuth(): Promise<void> {
     const getter = this.server.get();
-    this.openAuthWebPage();
+    if (!(await this.openAuthWebPage())) {
+      throw new Error('Fail to open authorization web page.');
+    }
     const code = await getter;
-    this.setAuthorizationCode(code);
+    await this.setAuthorizationCode(code);
   }
   async request<T = any>(opts: GaxiosOptions): Promise<GaxiosResponse<T>> {
     opts.retryConfig = opts.retryConfig || {};
