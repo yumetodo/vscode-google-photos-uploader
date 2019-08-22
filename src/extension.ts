@@ -10,6 +10,7 @@ import { AuthManager } from './authManager';
 import { Photos } from './googlePhotos';
 import { waitFor } from './timer';
 import { selectTargetAlbum } from './selectTargetAlbum';
+const googlePhotosAcceptableUseReferenceUrl = 'https://developers.google.com/photos/library/guides/acceptable-use';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
@@ -20,6 +21,17 @@ export async function activate(context: vscode.ExtensionContext) {
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
   let disposable = vscode.commands.registerCommand('google-photos-uploader.upload', async () => {
+    vscode.window
+      .showInformationMessage(
+        'You must use this plugin only for a personal nature because of Google Photos API limitation\n' +
+          googlePhotosAcceptableUseReferenceUrl,
+        'visit'
+      )
+      .then(r => {
+        if ('visit' === r) {
+          vscode.env.openExternal(vscode.Uri.parse(googlePhotosAcceptableUseReferenceUrl));
+        }
+      });
     if (!vscode.window.activeTextEditor) {
       vscode.window.showErrorMessage('Please open target markdown text file.');
       return;
