@@ -39,12 +39,12 @@ export class AuthManager {
       clientInfo.installed.client_secret,
       `http://127.0.0.1:${this.server.port}`
     );
-    const access_token = this.configuration.get('access_token');
-    const refresh_token = this.configuration.get('refresh_token');
-    if (access_token && refresh_token) {
+    const accessToken = this.configuration.get('access_token');
+    const refreshToken = this.configuration.get('refresh_token');
+    if (accessToken && refreshToken) {
       this.oauth2Client.setCredentials({
-        access_token: access_token,
-        refresh_token: refresh_token,
+        access_token: accessToken,
+        refresh_token: refreshToken,
       });
     }
     this.oauth2Client.on('tokens', tokens => {
@@ -95,7 +95,7 @@ export class AuthManager {
     const code = await getter;
     await this.setAuthorizationCode(code);
   }
-  async request<T = any>(opts: GaxiosOptions): Promise<GaxiosResponse<T>> {
+  async request<T>(opts: GaxiosOptions): Promise<GaxiosResponse<T>> {
     opts.retryConfig = opts.retryConfig || {};
     opts.retryConfig.retry = 4;
     opts.retryConfig.retryDelay = 1000;
@@ -103,7 +103,7 @@ export class AuthManager {
     return this.oauth2Client.request(opts);
   }
   private async checkTokensIsValid(): Promise<boolean> {
-    const token = await this.access_token();
+    const token = await this.accessToken();
     if (!token) {
       return false;
     } else {
@@ -111,7 +111,7 @@ export class AuthManager {
       return undefined !== info.access_type;
     }
   }
-  async access_token(): Promise<string | null | undefined> {
+  async accessToken(): Promise<string | null | undefined> {
     const { token } = await this.oauth2Client.getAccessToken();
     return token;
   }

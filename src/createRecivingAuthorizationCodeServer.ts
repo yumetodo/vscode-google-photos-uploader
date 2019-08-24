@@ -5,6 +5,7 @@ export class RecivingAuthorizationCodeServer {
   private connections: Map<string, Socket>;
   private server: Server;
   private usingPort: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private codeGetter: [(value?: string | PromiseLike<string> | undefined) => void, (reason?: any) => void] | null;
   private constructor(port: number, serverResponceText: string, onServerListening: () => void) {
     this.codeGetter = null;

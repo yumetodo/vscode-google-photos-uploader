@@ -20,7 +20,7 @@ export async function activate(context: vscode.ExtensionContext) {
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
-  let disposable = vscode.commands.registerCommand('google-photos-uploader.upload', async () => {
+  const disposable = vscode.commands.registerCommand('google-photos-uploader.upload', async () => {
     if (!(await GooglePhotos.Album.validityVerification())) {
       vscode.window
         .showErrorMessage(
@@ -91,7 +91,7 @@ export async function activate(context: vscode.ExtensionContext) {
             const index =
               tokenGetters.push(
                 timer
-                  .then(_ => photos.upload(p, c.signal))
+                  .then(() => photos.upload(p, c.signal))
                   .then(t => {
                     timer = waitFor(300);
                     AbortControllerMap.delete(k);

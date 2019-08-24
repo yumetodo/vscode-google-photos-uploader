@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import { AuthManager } from './authManager';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -223,10 +224,10 @@ export namespace Photos {
         })
         .then(a => a.data);
     }
-    async listAll(signal: AbortSignal, excludeNonAppCreatedData: boolean = false): Promise<OutputonlyAlbum[]> {
+    async listAll(signal: AbortSignal, excludeNonAppCreatedData = false): Promise<OutputonlyAlbum[]> {
       let re: OutputonlyAlbum[] = [];
       let responce: Albums.ListResponce;
-      let opt: Albums.ListOptions = {
+      const opt: Albums.ListOptions = {
         method: 'GET',
         url: 'https://photoslibrary.googleapis.com/v1/albums',
         validateStatus: status => status >= 200 && status < 300,
@@ -296,7 +297,7 @@ export namespace Photos {
     }
     async batchCreate(b: Readonly<MediaItems.BatchCreateBody>, signal: AbortSignal): Promise<NewMediaItemResult[]> {
       let re: NewMediaItemResult[] = [];
-      let body = { ...b };
+      const body = { ...b };
       const newMediaItemLimitPerRequest = 50;
       for (let i = 0; i < b.newMediaItems.length; i += newMediaItemLimitPerRequest) {
         body.newMediaItems = b.newMediaItems.slice(i, i + newMediaItemLimitPerRequest);
@@ -349,7 +350,7 @@ export namespace Photos {
     async searchAll(b: string | Filters, signal: AbortSignal) {
       let re: MediaItem[] = [];
       let responce: MediaItems.SearchResponce;
-      let opt: MediaItems.SearchOptions = {
+      const opt: MediaItems.SearchOptions = {
         method: 'POST',
         url: 'https://photoslibrary.googleapis.com/v1/mediaItems:search',
         validateStatus: status => status >= 200 && status < 300,
