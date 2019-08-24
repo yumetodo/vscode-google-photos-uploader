@@ -21,6 +21,21 @@ export async function activate(context: vscode.ExtensionContext) {
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
   let disposable = vscode.commands.registerCommand('google-photos-uploader.upload', async () => {
+    if (!(await GooglePhotos.Album.validityVerification())) {
+      vscode.window
+        .showErrorMessage(
+          'GooglePhotos.Album.fetchImageUrls is currently broken. Please watch Issue tracker.',
+          'Issue tracker'
+        )
+        .then(r => {
+          if ('Issue tracker' === r) {
+            vscode.env.openExternal(
+              vscode.Uri.parse('https://github.com/yumetodo/google-photos-album-image-url-fetch/issues')
+            );
+          }
+        });
+      return;
+    }
     vscode.window
       .showInformationMessage(
         'You must use this plugin only for a personal nature because of Google Photos API limitation\n' +
