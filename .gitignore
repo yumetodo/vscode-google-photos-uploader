@@ -97,3 +97,5 @@ typings/
 azue_devops_personal_access_token.txt
 
 dist
+*.avi
+*.mp4

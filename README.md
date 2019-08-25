@@ -10,11 +10,9 @@ The command will do all the step shown below:
 2. upload to [Google Photos](https://www.google.com/photos/about/)
 3. replace img path to Google Photos published url
 
-![select_upload](images/select_upload.gif)
+Keep in mind that this plugin will publish all images the target markdown file referencing to all over the world.
 
-## CAUTION!
-
-Currently, to get img url, we are using [`baseUrl` that is valid **only for 60 minutes**](https://developers.google.com/photos/library/guides/access-media-items#base-urls). **DO NOT USE THIS PLUGIN UNTIL THIS BUG IS TO BE FIXED**.
+![select_upload](images/working.gif)
 
 ## How to use
 
@@ -22,26 +20,25 @@ Currently, to get img url, we are using [`baseUrl` that is valid **only for 60 m
 
 Open command palet(`Ctrl`+`Shift`+`P`), find `google-photos-uploader: Upload image and replace` command and execute.
 
-![run command](images/first&#32;step.png)
+![run command](images/start.jpg)
 
 ### (OAuth)
 
-This plugin sometimes request you OAuth Authentication.
+This plugin sometimes request you OAuth2 Authentication.
 
 In this case, default browser will be started.
 
 1. Select Google acount and login  
-![oauth_select_account](images/oauth_select_account.png)
-2. Authorize these parmissions  
-![oauth_parmission_1](images/oauth_parmission_1.png)  
-![oauth_parmission_2](images/oauth_parmission_2.png)
-3. Authorize these parmissions again!(I don't know why authorize phase are duplicated)  
-![oauth_parmission_3](images/oauth_parmission_3.png)
-4. Copy auth token(DO NOT TELL THIS TO OTHER PEOPLE)  
-![oauth_parmission_4](images/oauth_parmission_4.png)
-5. Go back to vscode. Then, paste auto token.  
-![oauth_parmission_5](images/oauth_parmission_5.png)  
-![oauth_parmission_6](images/oauth_parmission_6.png)
+![oauth2_select_account](images/oauth2_select_account.png)
+2. App verification is now in progress. Until I receive Google's response, please ignore this warning to continue when you think this plugin is reliable.  
+![unverifiied_apps_notification](images/unverifiied_apps_notification.png)
+3. Authorize these parmissions.  
+![oauth2_scope_check_1](images/oauth2_scope_check_1.png)  
+![oauth2_scope_check_1](images/oauth2_scope_check_2.png)
+4. Authorize these parmissions again!(I don't know why authorize phase are duplicated)  
+![oauth2_scope_check_3](images/oauth2_scope_check_3.png)
+5. Sucess! Go back to vscode.  
+![oauth2_success](images/oauth2_success.png)
 
 ## Select Album
 
@@ -53,11 +50,11 @@ So, you have 3 choices to upload images.
 2. create a new album
 3. select album already created by this plugin
 
-![select album](images/select&#32;album.png)
+![select album](images/select_album.jpg)
 
 When you chose `create a new album`, you need to specify the new album name.
 
-![create album](images/create&#32;album.png)
+![create album](images/input_album_name.jpg)
 
 ## Please wait for seconds
 
@@ -69,9 +66,11 @@ On this phase, this plugin executes below:
 4. get published image URL
 5. replace image path to the URL
 
-![uploading](images/uploading.png)
+![uploading](images/uploading.jpg)
 
-![select_upload](images/select_upload.gif)
+![select_upload](images/registering.jpg)
+
+![finish](images/finish.jpg)
 
 ## Known Issue
 
