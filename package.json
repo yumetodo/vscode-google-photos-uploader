@@ -2,7 +2,7 @@
 	"name": "google-photos-uploader",
 	"displayName": "Google Photos Uploader(unofficial)",
 	"description": "find local image link, upload to Google Photos, and replace link",
-	"version": "1.0.3",
+	"version": "2.0.0",
 	"engines": {
 		"vscode": "^1.32.0"
 	},
