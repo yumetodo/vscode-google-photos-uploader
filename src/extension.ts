@@ -175,7 +175,7 @@ export async function activate(context: vscode.ExtensionContext) {
                   re.push(undefined);
                 }
                 before = after;
-                progress.report({ increment: (100 * i) / tokens.length });
+                progress.report({ increment: (100 * (i + 1)) / tokens.length });
               }
               return re;
             }
