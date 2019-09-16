@@ -4,6 +4,8 @@
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const TerserPlugin = require('terser-webpack-plugin');
 
 /**@type {import('webpack').Configuration}*/
 const config = {
@@ -16,8 +18,20 @@ const config = {
     filename: 'extension.js',
     libraryTarget: 'commonjs2',
     devtoolModuleFilenameTemplate: '../[resource-path]',
+    webassemblyModuleFilename: "[modulehash].wasm",
   },
   devtool: 'source-map',
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          mangle: false,
+          keep_classnames: true,
+          keep_fnames: true,
+        },
+      }),
+    ],
+  },
   externals: {
     vscode: 'commonjs vscode', // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
   },
@@ -44,6 +58,10 @@ const config = {
       {
         test: /\.html$/,
         use: 'raw-loader',
+      },
+      {
+        test: /\.wasm$/,
+        type: 'webassembly/experimental',
       },
     ],
   },
