@@ -115,24 +115,28 @@ export async function activate(context: vscode.ExtensionContext) {
           return () => urls[index] || s;
         }
       });
-      const tokens = await vscode.window.withProgress(
-        {
-          cancellable: true,
-          title: 'uploading images...',
-          location: vscode.ProgressLocation.Notification,
-        },
-        (_, token) => {
-          token.onCancellationRequested(onCancellationRequested);
-          return Promise.all(tokenGetters);
-        }
-      );
-      urls = await vscode.window.withProgress(
-        { cancellable: false, title: 'registering images...', location: vscode.ProgressLocation.Notification },
-        async progress => imageRegister(progress, AbortControllerMap, targetAlbum, photos, timestamps, tokens)
-      );
-      textEditor.edit(builder => {
-        builder.replace(allRange, markdownImgUrlEditor.replace());
-      });
+      try {
+        const tokens = await vscode.window.withProgress(
+          {
+            cancellable: true,
+            title: 'uploading images...',
+            location: vscode.ProgressLocation.Notification,
+          },
+          (_, token) => {
+            token.onCancellationRequested(onCancellationRequested);
+            return Promise.all(tokenGetters);
+          }
+        );
+        urls = await vscode.window.withProgress(
+          { cancellable: false, title: 'registering images...', location: vscode.ProgressLocation.Notification },
+          async progress => imageRegister(progress, AbortControllerMap, targetAlbum, photos, timestamps, tokens)
+        );
+        textEditor.edit(builder => {
+          builder.replace(allRange, markdownImgUrlEditor.replace());
+        });
+      } finally {
+        markdownImgUrlEditor.free();
+      }
     } catch (er) {
       if (!(er instanceof Error && er.name === 'AbortError')) {
         onCancellationRequested();
