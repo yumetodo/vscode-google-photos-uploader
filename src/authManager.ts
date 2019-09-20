@@ -5,18 +5,6 @@ import { getPortPromise } from 'portfinder';
 import { Configuration } from './iConfiguration';
 import { RecivingAuthorizationCodeServer } from './createRecivingAuthorizationCodeServer';
 import authorizationCodeRecivingSucsessHTML from './authorizationCodeRecivingSucsess.html';
-//ここは馬鹿にしか見えない
-const clientInfo = {
-  installed: {
-    client_id: '60080774031-sl0osvubtlfj9pisg9kmaocrqirgddk0.apps.googleusercontent.com',
-    project_id: 'resolute-cat-232404',
-    auth_uri: 'https://accounts.google.com/o/oauth2/auth',
-    token_uri: 'https://oauth2.googleapis.com/token',
-    auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
-    client_secret: 'icg6tV3DMbjBCYYKS2T-e6zF',
-    redirect_uris: ['urn:ietf:wg:oauth:2.0:oob', 'http://localhost'],
-  },
-};
 const SCOPES = {
   READ_ONLY: 'https://www.googleapis.com/auth/photoslibrary.readonly',
   APPEND_ONLY: 'https://www.googleapis.com/auth/photoslibrary.appendonly',
@@ -30,14 +18,15 @@ export class AuthManager {
   private oauth2Client: OAuth2Client;
   /** reserve port */
   private server: RecivingAuthorizationCodeServer;
-  private constructor(configuration: Configuration, server: RecivingAuthorizationCodeServer) {
+  private constructor(
+    configuration: Configuration,
+    server: RecivingAuthorizationCodeServer,
+    clientId: string,
+    clientSecret: string
+  ) {
     this.configuration = configuration;
     this.server = server;
-    this.oauth2Client = new google.auth.OAuth2(
-      clientInfo.installed.client_id,
-      clientInfo.installed.client_secret,
-      `http://127.0.0.1:${this.server.port}`
-    );
+    this.oauth2Client = new google.auth.OAuth2(clientId, clientSecret, `http://127.0.0.1:${this.server.port}`);
     const accessToken = this.configuration.get('access_token');
     const refreshToken = this.configuration.get('refresh_token');
     if (accessToken && refreshToken) {
@@ -55,12 +44,17 @@ export class AuthManager {
       }
     });
   }
-  static async init(configuration: Configuration, openAuthWebPage: (url: string) => Promise<boolean>) {
+  static async init(
+    configuration: Configuration,
+    openAuthWebPage: (url: string) => Promise<boolean>,
+    clientId: string,
+    clientSecret: string
+  ) {
     const server = await RecivingAuthorizationCodeServer.init(
       await getPortPromise(),
       authorizationCodeRecivingSucsessHTML
     );
-    const re = new AuthManager(configuration, server);
+    const re = new AuthManager(configuration, server, clientId, clientSecret);
     if (!(await re.checkTokensIsValid().catch(() => false))) {
       await re.firstTimeAuth(openAuthWebPage);
     }

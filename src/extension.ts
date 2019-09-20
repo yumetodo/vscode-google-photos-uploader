@@ -11,12 +11,27 @@ import { waitFor } from './timer';
 import { selectTargetAlbum } from './selectTargetAlbum';
 import { imageRegister } from './imageRegister';
 const googlePhotosAcceptableUseReferenceUrl = 'https://developers.google.com/photos/library/guides/acceptable-use';
+//ここは馬鹿にしか見えない
+const clientInfo = {
+  installed: {
+    client_id: '60080774031-sl0osvubtlfj9pisg9kmaocrqirgddk0.apps.googleusercontent.com',
+    project_id: 'resolute-cat-232404',
+    auth_uri: 'https://accounts.google.com/o/oauth2/auth',
+    token_uri: 'https://oauth2.googleapis.com/token',
+    auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
+    client_secret: 'icg6tV3DMbjBCYYKS2T-e6zF',
+    redirect_uris: ['urn:ietf:wg:oauth:2.0:oob', 'http://localhost'],
+  },
+};
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
   const configuration = new Configuration();
-  const authManager = await AuthManager.init(configuration, url =>
-    Promise.resolve(vscode.env.openExternal(vscode.Uri.parse(url)))
+  const authManager = await AuthManager.init(
+    configuration,
+    url => Promise.resolve(vscode.env.openExternal(vscode.Uri.parse(url))),
+    clientInfo.installed.client_id,
+    clientInfo.installed.client_secret
   );
   const photos = new Photos(authManager);
   // The command has been defined in the package.json file
