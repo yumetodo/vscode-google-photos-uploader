@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.1.0
+
+- update `markdown_img_url_editor` to `v4.0.1`
+  - use [pulldown-cmark](https://crates.io/crates/pulldown-cmark)(rustlibary) to parse.
+  - use [pulldown-cmark-to-cmark](https://crates.io/crates/pulldown-cmark-to-cmark)(rustlibary) to replace.
+
 ## 2.0.0
 
 - use Loopback IP address ( #3 )

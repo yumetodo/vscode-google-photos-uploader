@@ -74,4 +74,42 @@ On this phase, this plugin executes below:
 
 ## Known Issue
 
-Image syntax written in code blocks in lists will also be replaced due to markdown parse bug in [`markdown_img_url_editor`](https://github.com/yumetodo/markdown_img_url_editor).
+Because of [pulldown-cmark-to-cmark](https://crates.io/crates/pulldown-cmark-to-cmark) limitation, all code block will be replaced like below:
+
+`before`:
+
+    ```typescript
+    console.log("arikitari na sekai");
+    ```
+
+`after`:
+
+    ````typescript
+    console.log("arikitari na sekai");
+    ````
+
+Almost all cases, that is no problem because HTML converted result will be equal.
+
+However, in some cases, the replaced result will be broken.
+
+`before`:
+
+``````markdown
+`````markdown
+````markdown
+```typescript
+console.log("arikitari na sekai");
+```
+````
+`````
+``````
+
+`after`:
+
+    ````markdown
+    ````markdown
+    ```typescript
+    console.log("arikitari na sekai");
+    ```
+    ````
+    ````
