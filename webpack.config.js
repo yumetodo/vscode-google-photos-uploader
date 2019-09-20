@@ -18,7 +18,7 @@ const config = {
     filename: 'extension.js',
     libraryTarget: 'commonjs2',
     devtoolModuleFilenameTemplate: '../[resource-path]',
-    webassemblyModuleFilename: "[modulehash].wasm",
+    webassemblyModuleFilename: '[modulehash].wasm',
   },
   devtool: 'source-map',
   optimization: {
