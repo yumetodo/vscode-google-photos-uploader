@@ -1,9 +1,8 @@
-import * as vscode from 'vscode';
 import { google } from 'googleapis';
 import { OAuth2Client } from 'googleapis-common';
 import { GaxiosOptions, GaxiosResponse } from 'gaxios';
 import { getPortPromise } from 'portfinder';
-import { Configuration } from './configuration';
+import { Configuration } from './iConfiguration';
 import { RecivingAuthorizationCodeServer } from './createRecivingAuthorizationCodeServer';
 import authorizationCodeRecivingSucsessHTML from './authorizationCodeRecivingSucsess.html';
 //ここは馬鹿にしか見えない
@@ -56,14 +55,14 @@ export class AuthManager {
       }
     });
   }
-  static async init(configuration: Configuration) {
+  static async init(configuration: Configuration, openAuthWebPage: (url: string) => Promise<boolean>) {
     const server = await RecivingAuthorizationCodeServer.init(
       await getPortPromise(),
       authorizationCodeRecivingSucsessHTML
     );
     const re = new AuthManager(configuration, server);
     if (!(await re.checkTokensIsValid().catch(() => false))) {
-      await re.firstTimeAuth();
+      await re.firstTimeAuth(openAuthWebPage);
     }
     return re;
   }
@@ -72,9 +71,6 @@ export class AuthManager {
       access_type: 'offline',
       scope: scopes,
     });
-  }
-  private async openAuthWebPage() {
-    return vscode.env.openExternal(vscode.Uri.parse(this.createAuthUrl()));
   }
   private async setAuthorizationCode(code: string): Promise<void> {
     const { tokens } = await this.oauth2Client.getToken(code);
@@ -87,9 +83,9 @@ export class AuthManager {
       this.configuration.set('refresh_token', tokens.refresh_token);
     }
   }
-  async firstTimeAuth(): Promise<void> {
+  async firstTimeAuth(openAuthWebPage: (url: string) => Promise<boolean>): Promise<void> {
     const getter = this.server.get();
-    if (!(await this.openAuthWebPage())) {
+    if (!(await openAuthWebPage(this.createAuthUrl()))) {
       throw new Error('Fail to open authorization web page.');
     }
     const code = await getter;

@@ -4,7 +4,6 @@ import { promises as fs } from 'fs';
 import AbortController from 'abort-controller';
 import { MarkdownImgUrlEditor } from 'markdown_img_url_editor';
 import { GooglePhotos } from 'google-photos-album-image-url-fetch';
-import { URL } from 'url';
 import { Configuration } from './configuration';
 import { AuthManager } from './authManager';
 import { Photos } from './googlePhotos';
@@ -16,7 +15,9 @@ const googlePhotosAcceptableUseReferenceUrl = 'https://developers.google.com/pho
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
   const configuration = new Configuration();
-  const authManager = await AuthManager.init(configuration);
+  const authManager = await AuthManager.init(configuration, url =>
+    Promise.resolve(vscode.env.openExternal(vscode.Uri.parse(url)))
+  );
   const photos = new Photos(authManager);
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand

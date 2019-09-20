@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
+import { Configuration as iConfiguration } from './iConfiguration';
 //note: When you change valid key string, you must also update package.json
 
-export class Configuration {
+export class Configuration implements iConfiguration {
   private wspConf: vscode.WorkspaceConfiguration;
   private cache: Map<string, string>;
 
