@@ -18,7 +18,7 @@ const config = {
     filename: 'extension.js',
     libraryTarget: 'commonjs2',
     devtoolModuleFilenameTemplate: '../[resource-path]',
-    webassemblyModuleFilename: '[modulehash].wasm',
+    // webassemblyModuleFilename: '[modulehash].wasm',
   },
   devtool: 'source-map',
   optimization: {
@@ -37,7 +37,7 @@ const config = {
   },
   resolve: {
     // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts', '.js', '.wasm'],
   },
   module: {
     rules: [
