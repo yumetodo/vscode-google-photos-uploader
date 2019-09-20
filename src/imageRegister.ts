@@ -55,19 +55,40 @@ export async function imageRegister(
   progress.report({ increment: 0 });
   const re: (string | undefined)[] = [];
   let before = await fetchImageUrlsWrap(targetAlbum.shareableUrl, AbortControllerMap);
-  let fetchImageUrlsTimer = waitFor(1500);
+  /**
+   * To avoid [岡崎市立中央図書館事件](https://ja.wikipedia.org/wiki/岡崎市立中央図書館事件),
+   * we need to take more than 1s waiting.
+   */
+  let fetchImageUrlsTimer = waitFor(2000);
   for (let i = 0; i < tokens.length; ++i) {
     const [description, uploadToken] = tokens[i];
     await batchCreateWrap(photos, targetAlbum.albumId, uploadToken, description, AbortControllerMap);
-    await fetchImageUrlsTimer;
-    const after = await fetchImageUrlsWrap(targetAlbum.shareableUrl, AbortControllerMap);
-    fetchImageUrlsTimer = waitFor(1500);
+    // To guarantee batchCreate background task executed on Google's server, wait at least 1.5sec.
+    await Promise.all([fetchImageUrlsTimer, waitFor(1500)]);
+    let after = await fetchImageUrlsWrap(targetAlbum.shareableUrl, AbortControllerMap);
+    fetchImageUrlsTimer = waitFor(2000);
     if (null === after) {
-      throw new Error('GooglePhotos.Album.fetchImageUrls fail');
+      // retry
+      await fetchImageUrlsTimer;
+      after = await fetchImageUrlsWrap(targetAlbum.shareableUrl, AbortControllerMap);
+      fetchImageUrlsTimer = waitFor(2000);
+      if (null === after) {
+        throw new Error('GooglePhotos.Album.fetchImageUrls fail');
+      }
     }
     let appended = null === before ? after : GooglePhotos.Album.extractAppended(before, after);
     if (0 === appended.length) {
-      throw new Error('Unexpected behavior was occurred while registering image');
+      // retry
+      await fetchImageUrlsTimer;
+      const after = await fetchImageUrlsWrap(targetAlbum.shareableUrl, AbortControllerMap);
+      fetchImageUrlsTimer = waitFor(2000);
+      if (null === after) {
+        throw new Error('GooglePhotos.Album.fetchImageUrls fail');
+      }
+      appended = null === before ? after : GooglePhotos.Album.extractAppended(before, after);
+      if (0 === appended.length) {
+        throw new Error('Unexpected behavior was occurred while registering image');
+      }
     }
     if (1 < appended.length) {
       const timestamp = await timestamps[i];
