@@ -139,7 +139,7 @@ export async function activate(context: vscode.ExtensionContext) {
               t = waitFor(1000);
               progress.report({
                 increment: (100 * ++i) / tokenGetters.length,
-                message: `uploading images...(${i}/${tokenGetters.length})`,
+                message: `(${i}/${tokenGetters.length})`,
               });
             }
             await t;
