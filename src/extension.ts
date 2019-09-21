@@ -85,7 +85,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
       const selectedTabFilePath = vscode.window.activeTextEditor.document.fileName;
       const dir = path.dirname(selectedTabFilePath);
-      const tokenGetters: Array<() => Promise<[string, string]>> = [];
+      const tokenGetters: Array<() => Promise<[string, string] | null>> = [];
       const uploadingImagePath = new Map<string, number>();
       const timestamps: Promise<number>[] = [];
       let urls: (string | undefined)[] = [];
@@ -102,9 +102,15 @@ export async function activate(context: vscode.ExtensionContext) {
           AbortControllerMap.set(k, c);
           const index =
             tokenGetters.push(async () => {
-              const t = await photos.upload(p, c.signal);
-              AbortControllerMap.delete(k);
-              return [alt, t];
+              try {
+                await fs.stat(p);
+                const t = await photos.upload(p, c.signal);
+                return [alt, t];
+              } catch (_) {
+                return null;
+              } finally {
+                AbortControllerMap.delete(k);
+              }
             }) - 1;
           uploadingImagePath.set(p, index);
           return () => urls[index] || s;
@@ -126,10 +132,18 @@ export async function activate(context: vscode.ExtensionContext) {
             for (const getter of tokenGetters) {
               await t;
               // request sequentially
-              tokens.push(await getter());
+              const token = await getter();
+              if (token) {
+                tokens.push(token);
+              }
               t = waitFor(1000);
-              progress.report({ increment: (100 * ++i) / tokenGetters.length });
+              progress.report({
+                increment: (100 * ++i) / tokenGetters.length,
+                message: `uploading images...(${i}/${tokenGetters.length})`,
+              });
             }
+            await t;
+            progress.report({ message: 'upload finished.' });
             return tokens;
           }
         );
