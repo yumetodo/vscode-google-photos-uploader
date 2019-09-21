@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.1.1
+
+- upload image sequentially
+
 ## 2.1.0
 
 - update `markdown_img_url_editor` to `v4.0.1`
