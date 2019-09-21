@@ -85,11 +85,10 @@ export async function activate(context: vscode.ExtensionContext) {
       }
       const selectedTabFilePath = vscode.window.activeTextEditor.document.fileName;
       const dir = path.dirname(selectedTabFilePath);
-      const tokenGetters: Array<Promise<[string, string]>> = [];
+      const tokenGetters: Array<() => Promise<[string, string]>> = [];
       const uploadingImagePath = new Map<string, number>();
       const timestamps: Promise<number>[] = [];
       let urls: (string | undefined)[] = [];
-      let timer = waitFor(1);
       const markdownImgUrlEditor = await MarkdownImgUrlEditor.init(text, (alt: string, s: string) => {
         const p = path.resolve(dir, s);
         //avoid duplicate upload
@@ -102,15 +101,11 @@ export async function activate(context: vscode.ExtensionContext) {
           const c = new AbortController();
           AbortControllerMap.set(k, c);
           const index =
-            tokenGetters.push(
-              timer
-                .then(() => photos.upload(p, c.signal))
-                .then(t => {
-                  timer = waitFor(300);
-                  AbortControllerMap.delete(k);
-                  return [alt, t];
-                })
-            ) - 1;
+            tokenGetters.push(async () => {
+              const t = await photos.upload(p, c.signal);
+              AbortControllerMap.delete(k);
+              return [alt, t];
+            }) - 1;
           uploadingImagePath.set(p, index);
           return () => urls[index] || s;
         }
@@ -122,9 +117,20 @@ export async function activate(context: vscode.ExtensionContext) {
             title: 'uploading images...',
             location: vscode.ProgressLocation.Notification,
           },
-          (_, token) => {
+          async (progress, token) => {
             token.onCancellationRequested(onCancellationRequested);
-            return Promise.all(tokenGetters);
+            const tokens: [string, string][] = [];
+            let t = waitFor(1);
+            progress.report({ increment: 0 });
+            let i = 0;
+            for (const getter of tokenGetters) {
+              await t;
+              // request sequentially
+              tokens.push(await getter());
+              t = waitFor(1000);
+              progress.report({ increment: (100 * ++i) / tokenGetters.length });
+            }
+            return tokens;
           }
         );
         urls = await vscode.window.withProgress(
