@@ -96,7 +96,7 @@ export async function imageRegister(
     }
     re.push(1 === appended.length ? formatURL(appended[0]) : undefined);
     before = after;
-    progress.report({ increment: (100 * (i + 1)) / tokens.length });
+    progress.report({ increment: 100 / tokens.length, message: `(${i}/${tokens.length})` });
   }
   return re;
 }
