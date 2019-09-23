@@ -10,6 +10,7 @@ import { Photos } from './googlePhotos';
 import { waitFor } from './timer';
 import { selectTargetAlbum } from './selectTargetAlbum';
 import { imageRegister } from './imageRegister';
+import { mergePureUrlsAndNoReplaceIndexes } from './mergePureUrlsAndNoReplaceIndexes';
 const googlePhotosAcceptableUseReferenceUrl = 'https://developers.google.com/photos/library/guides/acceptable-use';
 //ここは馬鹿にしか見えない
 const clientInfo = {
@@ -87,8 +88,8 @@ export async function activate(context: vscode.ExtensionContext) {
       const dir = path.dirname(selectedTabFilePath);
       const tokenGetters: Array<() => Promise<[string, string] | null>> = [];
       const uploadingImagePath = new Map<string, number>();
-      const timestamps: Promise<number>[] = [];
-      let urls: (string | undefined)[] = [];
+      const noReplaceIndexes: number[] = [];
+      let urls: readonly (string | undefined)[] = [];
       const markdownImgUrlEditor = await MarkdownImgUrlEditor.init(text, (alt: string, s: string) => {
         const p = path.resolve(dir, s);
         //avoid duplicate upload
@@ -99,18 +100,19 @@ export async function activate(context: vscode.ExtensionContext) {
           const k = `upload::${p}`;
           const c = new AbortController();
           AbortControllerMap.set(k, c);
-          const index =
-            tokenGetters.push(async () => {
-              try {
-                await fs.stat(p);
-                const t = await photos.upload(p, c.signal);
-                return [alt, t];
-              } catch (_) {
-                return null;
-              } finally {
-                AbortControllerMap.delete(k);
-              }
-            }) - 1;
+          const index = tokenGetters.length;
+          tokenGetters.push(async () => {
+            try {
+              await fs.stat(p);
+              const t = await photos.upload(p, c.signal);
+              return [alt, t];
+            } catch (_) {
+              noReplaceIndexes.push(index);
+              return null;
+            } finally {
+              AbortControllerMap.delete(k);
+            }
+          });
           uploadingImagePath.set(p, index);
           return () => urls[index] || s;
         }
@@ -146,12 +148,17 @@ export async function activate(context: vscode.ExtensionContext) {
             return tokens;
           }
         );
-        urls = await vscode.window.withProgress(
+        const pureUrls = await vscode.window.withProgress(
           { cancellable: false, title: 'registering images...', location: vscode.ProgressLocation.Notification },
           async progress => imageRegister(progress, AbortControllerMap, targetAlbum, photos, tokens)
         );
+        urls = mergePureUrlsAndNoReplaceIndexes(pureUrls, noReplaceIndexes);
+        const replaced = markdownImgUrlEditor.replace();
+        if ('\n' !== replaced[replaced.length]) {
+          replaced.concat('\n');
+        }
         textEditor.edit(builder => {
-          builder.replace(allRange, markdownImgUrlEditor.replace());
+          builder.replace(allRange, replaced);
         });
       } finally {
         markdownImgUrlEditor.free();
