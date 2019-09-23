@@ -97,7 +97,6 @@ export async function activate(context: vscode.ExtensionContext) {
           return () => (index ? urls[index] || s : s);
         } else {
           const k = `upload::${p}`;
-          timestamps.push(fs.stat(p).then(stat => stat.mtimeMs));
           const c = new AbortController();
           AbortControllerMap.set(k, c);
           const index =
@@ -149,7 +148,7 @@ export async function activate(context: vscode.ExtensionContext) {
         );
         urls = await vscode.window.withProgress(
           { cancellable: false, title: 'registering images...', location: vscode.ProgressLocation.Notification },
-          async progress => imageRegister(progress, AbortControllerMap, targetAlbum, photos, timestamps, tokens)
+          async progress => imageRegister(progress, AbortControllerMap, targetAlbum, photos, tokens)
         );
         textEditor.edit(builder => {
           builder.replace(allRange, markdownImgUrlEditor.replace());
