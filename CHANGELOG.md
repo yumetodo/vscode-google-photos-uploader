@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.1.2
+
+- rewrite img matching using img hash ( #2, b9fbb94 )
+- `token` is filterd so that store lacking info and merge ( fa8cdd7 )
+
 ## 2.1.1
 
 - upload image sequentially
