@@ -1,4 +1,4 @@
 export const waitFor = (ms: number) =>
-  new Promise((resolve, _) => {
+  new Promise(resolve => {
     setTimeout(resolve, ms);
   });
