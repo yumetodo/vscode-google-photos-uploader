@@ -1,5 +1,10 @@
 # google-photos-uploader
 
+[![Version](https://vsmarketplacebadge.apphb.com/version-short/yumetodo.google-photos-uploader.svg
+)](https://marketplace.visualstudio.com/items?itemName=yumetodo.google-photos-uploader)
+[![Installs](https://vsmarketplacebadge.apphb.com/installs/yumetodo.google-photos-uploader.svg
+)](https://marketplace.visualstudio.com/items?itemName=yumetodo.google-photos-uploader)
+
 ![icon](images/icon.png)
 
 This extension just provides `google-photos-uploader: Upload image and replace` command.
