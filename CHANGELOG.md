@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.1.3
+
+- web scrapping is required only one time ( c043fdd )
+
 ## 2.1.2
 
 - rewrite img matching using img hash ( #2, b9fbb94 )
