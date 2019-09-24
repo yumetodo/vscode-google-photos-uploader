@@ -84,26 +84,22 @@ async function batchCreateWrap(
     }
   });
 }
-async function imageRegisterRetryAfterExtractAppended(
-  before: ImageInfo[] | null,
+async function imageRegisterRetryAfterfetchImageUrls(
   targetAlbum: SelectTargetAlbumResult,
   AbortControllerMap: Map<string, AbortController>
 ) {
-  let appended: ImageInfo[] = [];
-  let j = 0;
-  do {
+  let info: ImageInfo[] | null = [];
+  for (
+    let j = 0;
+    j < 12 && null === (info = await fetchImageUrlsWrap(targetAlbum.shareableUrl, AbortControllerMap));
+    ++j
+  ) {
     await waitFor(10000);
-    const after = await fetchImageUrlsWrap(targetAlbum.shareableUrl, AbortControllerMap);
-    if (null === after) {
-      throw new Error('GooglePhotos.Album.fetchImageUrls fail');
-    }
-    appended = null === before ? after : GooglePhotos.Album.extractAppended(before, after);
-    ++j;
-  } while (j <= 12 && 0 === appended.length);
-  if (0 === appended.length) {
-    throw new Error('Unexpected behavior was occurred while registering image');
   }
-  return appended;
+  if (null === info) {
+    throw new Error('GooglePhotos.Album.fetchImageUrls fail');
+  }
+  return info;
 }
 export async function imageRegister(
   progress: vscode.Progress<{ message?: string; increment?: number }>,
@@ -112,43 +108,23 @@ export async function imageRegister(
   photos: Photos,
   tokens: [string, string][]
 ) {
-  progress.report({ message: 'Get album info before register' });
-  const before = await fetchImageUrlsWrap(targetAlbum.shareableUrl, AbortControllerMap);
   progress.report({ message: 'Register images' });
   const ids = await batchCreateWrap(photos, targetAlbum.albumId, tokens, AbortControllerMap);
   progress.report({ message: 'Get image hashes' });
   const fromAPIPromise = getImghasesfromAPI(photos, ids, AbortControllerMap);
   await waitFor(2000);
-  let after = await fetchImageUrlsWrap(targetAlbum.shareableUrl, AbortControllerMap);
-  if (null === after) {
-    for (
-      let j = 0;
-      j < 12 && null === (after = await fetchImageUrlsWrap(targetAlbum.shareableUrl, AbortControllerMap));
-      ++j
-    ) {
-      await waitFor(10000);
-    }
-    if (null === after) {
-      throw new Error('GooglePhotos.Album.fetchImageUrls fail');
-    }
-  }
-  const appended = null === before ? after : GooglePhotos.Album.extractAppended(before, after);
-  const fromWebScraping = await getImghasesfromWebScraping(
-    Object.freeze(
-      0 === appended.length
-        ? appended
-        : await imageRegisterRetryAfterExtractAppended(before, targetAlbum, AbortControllerMap)
-    ),
-    AbortControllerMap
-  );
+  const info =
+    (await fetchImageUrlsWrap(targetAlbum.shareableUrl, AbortControllerMap)) ||
+    (await imageRegisterRetryAfterfetchImageUrls(targetAlbum, AbortControllerMap));
+  const fromWebScraping = await getImghasesfromWebScraping(Object.freeze(info), AbortControllerMap);
   progress.report({ message: 'Match image info' });
   const fromAPI = await fromAPIPromise;
   return fromAPI.map(a => {
     const i = fromWebScraping.findIndex(v => a === v);
-    if (-1 === i || appended.length <= i) {
+    if (-1 === i || info.length <= i) {
       return undefined;
     } else {
-      return `${appended[i].url}=w${appended[i].width}-h${appended[i].height}`;
+      return `${info[i].url}=w${info[i].width}-h${info[i].height}`;
     }
   });
 }
