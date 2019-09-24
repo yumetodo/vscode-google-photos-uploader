@@ -154,7 +154,7 @@ export async function activate(context: vscode.ExtensionContext) {
         );
         urls = mergePureUrlsAndNoReplaceIndexes(pureUrls, noReplaceIndexes);
         const replaced = markdownImgUrlEditor.replace();
-        if ('\n' !== replaced[replaced.length]) {
+        if ('\n' !== replaced.slice(-1)) {
           replaced.concat('\n');
         }
         textEditor.edit(builder => {
