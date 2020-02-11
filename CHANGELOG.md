@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.1.4
+
+- This app's OAuth2 scope was verified by Google ( #3 )
+- update dependencies
+
 ## 2.1.3
 
 - web scrapping is required only one time ( c043fdd )
