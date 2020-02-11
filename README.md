@@ -35,14 +35,12 @@ In this case, default browser will be started.
 
 1. Select Google acount and login  
 ![oauth2_select_account](images/oauth2_select_account.png)
-2. App verification is now in progress. Until I receive Google's response, please ignore this warning to continue when you think this plugin is reliable.  
-![unverifiied_apps_notification](images/unverifiied_apps_notification.png)
-3. Authorize these parmissions.  
+2. Authorize these parmissions.  
 ![oauth2_scope_check_1](images/oauth2_scope_check_1.png)  
 ![oauth2_scope_check_1](images/oauth2_scope_check_2.png)
-4. Authorize these parmissions again!(I don't know why authorize phase are duplicated)  
+3. Authorize these parmissions again!(I don't know why authorize phase are duplicated)  
 ![oauth2_scope_check_3](images/oauth2_scope_check_3.png)
-5. Sucess! Go back to vscode.  
+4. Sucess! Go back to vscode.  
 ![oauth2_success](images/oauth2_success.png)
 
 ## Select Album
