@@ -1,17 +1,16 @@
 import * as vscode from 'vscode';
-import { GooglePhotos } from 'google-photos-album-image-url-fetch';
+import { fetchImageUrls, ImageInfo } from 'google-photos-album-image-url-fetch';
 import AbortController from 'abort-controller';
 import { Photos } from './googlePhotos';
 import { SelectTargetAlbumResult } from './selectTargetAlbum';
 import { waitFor } from './timer';
 import { request } from 'gaxios';
 import crypto from 'crypto';
-import { ImageInfo } from 'google-photos-album-image-url-fetch/dist/imageInfo';
 
 async function fetchImageUrlsWrap(shareableUrl: string, AbortControllerMap: Map<string, AbortController>) {
   const fetchImageUrlsAbortController = new AbortController();
   AbortControllerMap.set('fetchImageUrls', fetchImageUrlsAbortController);
-  const re = await GooglePhotos.Album.fetchImageUrls(shareableUrl, fetchImageUrlsAbortController.signal);
+  const re = await fetchImageUrls(shareableUrl, fetchImageUrlsAbortController.signal);
   AbortControllerMap.delete('fetchImageUrls');
   return re;
 }
@@ -97,7 +96,7 @@ async function imageRegisterRetryAfterfetchImageUrls(
     await waitFor(10000);
   }
   if (null === info) {
-    throw new Error('GooglePhotos.Album.fetchImageUrls fail');
+    throw new Error('GooglePhotosAlbum.fetchImageUrls fail');
   }
   return info;
 }

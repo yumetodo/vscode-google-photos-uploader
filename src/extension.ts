@@ -3,7 +3,7 @@ import * as path from 'path';
 import { promises as fs } from 'fs';
 import AbortController from 'abort-controller';
 import { MarkdownImgUrlEditor } from 'markdown_img_url_editor';
-import { GooglePhotos } from 'google-photos-album-image-url-fetch';
+import { validityVerification } from 'google-photos-album-image-url-fetch';
 import { Configuration } from './configuration';
 import { AuthManager } from './authManager';
 import { Photos } from './googlePhotos';
@@ -39,10 +39,10 @@ export async function activate(context: vscode.ExtensionContext) {
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
   const disposable = vscode.commands.registerCommand('google-photos-uploader.upload', async () => {
-    if (!(await GooglePhotos.Album.validityVerification())) {
+    if (!(await validityVerification())) {
       vscode.window
         .showErrorMessage(
-          'GooglePhotos.Album.fetchImageUrls is currently broken. Please watch Issue tracker.',
+          'GooglePhotosAlbum.fetchImageUrls is currently broken. Please watch Issue tracker.',
           'Issue tracker'
         )
         .then(r => {
