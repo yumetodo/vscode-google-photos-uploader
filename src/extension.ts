@@ -181,6 +181,11 @@ export function activate(context: vscode.ExtensionContext) {
       }
     })
   );
+  context.subscriptions.push(
+    vscode.commands.registerCommand('google-photos-uploader.clear', () => {
+      configuration.clear();
+    })
+  );
 }
 
 // this method is called when your extension is deactivated

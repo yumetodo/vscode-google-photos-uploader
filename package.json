@@ -34,6 +34,10 @@
 			{
 				"command": "google-photos-uploader.upload",
 				"title": "google-photos-uploader: Upload image and replace"
+			},
+			{
+				"command": "google-photos-uploader.clear",
+				"title": "google-photos-uploader: Clear auth cache"
 			}
 		],
 		"configuration": [

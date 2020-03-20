@@ -27,4 +27,9 @@ export class Configuration implements iConfiguration {
   reload() {
     this.cache.clear();
   }
+  clear() {
+    this.wspConf.update('access_token', '', true);
+    this.wspConf.update('refresh_token', '', true);
+    this.reload();
+  }
 }
