@@ -26,7 +26,7 @@ const clientInfo = {
 };
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export async function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext) {
   const configuration = new Configuration();
   let authManager: AuthManager | null = null;
   // The command has been defined in the package.json file
