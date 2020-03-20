@@ -23,7 +23,7 @@
     "@typescript-eslint/semi": "error",
     "@typescript-eslint/camelcase": ["error", { "properties": "never" }],
     "@typescript-eslint/explicit-function-return-type": "off",
-    "eqeqeq": "error",
+    "eqeqeq": ["error", "always", { "null": "ignore" }],
     "no-constant-condition": ["error", { "checkLoops": false }],
     "prettier/prettier": [
       "error", {
