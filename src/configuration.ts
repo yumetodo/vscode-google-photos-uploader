@@ -24,4 +24,7 @@ export class Configuration implements iConfiguration {
     this.cache.set(key, value);
     return this.wspConf.update(key, value, true);
   }
+  reload() {
+    this.cache.clear();
+  }
 }

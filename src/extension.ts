@@ -69,6 +69,7 @@ export async function activate(context: vscode.ExtensionContext) {
       vscode.window.showErrorMessage('Please open target markdown text file.');
       return;
     }
+    configuration.reload();
     const AbortControllerMap = new Map<string, AbortController>();
     const onCancellationRequested = () => {
       for (const c of AbortControllerMap.values()) {
