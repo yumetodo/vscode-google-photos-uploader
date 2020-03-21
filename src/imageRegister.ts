@@ -1,4 +1,4 @@
-import * as vscode from 'vscode';
+import { Progress } from 'vscode';
 import { fetchImageUrls, ImageInfo } from 'google-photos-album-image-url-fetch';
 import AbortController from 'abort-controller';
 import { Photos } from './googlePhotos';
@@ -101,7 +101,7 @@ async function imageRegisterRetryAfterfetchImageUrls(
   return info;
 }
 export async function imageRegister(
-  progress: vscode.Progress<{ message?: string; increment?: number }>,
+  progress: Progress<{ message?: string; increment?: number }>,
   AbortControllerMap: Map<string, AbortController>,
   targetAlbum: SelectTargetAlbumResult,
   photos: Photos,
