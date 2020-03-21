@@ -1,15 +1,11 @@
 export function mergePureUrlsAndNoReplaceIndexes(pureUrls: (string | undefined)[], noReplaceIndexes: number[]) {
   const re: (string | undefined)[] = [];
   let i = 0;
-  for (let j = 0; i < pureUrls.length && j < noReplaceIndexes.length; ++i) {
-    if (re.length === noReplaceIndexes[j]) {
+  for (const pureUrl of pureUrls) {
+    for (; i < noReplaceIndexes.length && re.length === noReplaceIndexes[i]; ++i) {
       re.push(undefined);
-      ++j;
     }
-    re.push(pureUrls[i]);
-  }
-  for (; i < pureUrls.length; ++i) {
-    re.push(pureUrls[i]);
+    re.push(pureUrl);
   }
   return Object.freeze(re);
 }
