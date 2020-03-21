@@ -103,7 +103,7 @@ export function activate(context: vscode.ExtensionContext) {
           //avoid duplicate upload
           if (uploadingImagePath.has(p)) {
             const index = uploadingImagePath.get(p);
-            return () => (index ? urls[index] || s : s);
+            return () => (index != null ? urls[index] || s : s);
           } else {
             const k = `upload::${p}`;
             const c = new AbortController();
