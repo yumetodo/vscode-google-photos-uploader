@@ -247,7 +247,7 @@ export namespace Photos {
             break;
           }
         } else {
-          return [];
+          return re;
         }
       }
       return re;
