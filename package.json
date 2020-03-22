@@ -74,9 +74,9 @@
 		"@typescript-eslint/eslint-plugin": "^2.24.0",
 		"@typescript-eslint/parser": "^2.24.0",
 		"eslint": "^6.8.0",
-		"eslint-config-prettier": "^6.10.0",
+		"eslint-config-prettier": "^6.10.1",
 		"eslint-plugin-prettier": "^3.1.2",
-		"prettier": "^1.19.1",
+		"prettier": "^2.0.1",
 		"raw-loader": "^4.0.0",
 		"ts-loader": "^6.2.1",
 		"typescript": "^3.8.3",
@@ -88,7 +88,7 @@
 		"gaxios": "^3.0.0",
 		"google-photos-album-image-url-fetch": "^2.0.1",
 		"googleapis": "^48.0.0",
-		"markdown_img_url_editor": "^4.0.2",
+		"markdown_img_url_editor": "^4.0.3",
 		"portfinder": "^1.0.25"
 	}
 }
