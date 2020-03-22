@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.2.0
+
+- feat: introduce google-photos-uploader.clear command ( #15 )
+- fix: photos src were sometimes replaced to different one. ( #13 )
+- fix: update dependencies
+
 ## 2.1.4
 
 - This app's OAuth2 scope was verified by Google ( #3 )
