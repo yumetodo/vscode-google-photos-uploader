@@ -4,6 +4,7 @@
 )](https://marketplace.visualstudio.com/items?itemName=yumetodo.google-photos-uploader)
 [![Installs](https://vsmarketplacebadge.apphb.com/installs/yumetodo.google-photos-uploader.svg
 )](https://marketplace.visualstudio.com/items?itemName=yumetodo.google-photos-uploader)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fyumetodo%2Fvscode-google-photos-uploader.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fyumetodo%2Fvscode-google-photos-uploader?ref=badge_shield)
 
 ![icon](images/icon.png)
 
@@ -116,3 +117,7 @@ console.log("arikitari na sekai");
     ```
     ````
     ````
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fyumetodo%2Fvscode-google-photos-uploader.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fyumetodo%2Fvscode-google-photos-uploader?ref=badge_large)
