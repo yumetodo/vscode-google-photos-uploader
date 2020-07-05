@@ -24,10 +24,10 @@ export class Configuration implements iConfiguration {
     this.cache.set(key, value);
     return this.wspConf.update(key, value, true);
   }
-  reload() {
+  reload(): void {
     this.cache.clear();
   }
-  clear() {
+  clear(): void {
     this.wspConf.update('access_token', '', true);
     this.wspConf.update('refresh_token', '', true);
     this.reload();

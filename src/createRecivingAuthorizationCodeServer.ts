@@ -51,10 +51,10 @@ export class RecivingAuthorizationCodeServer {
       });
     });
   }
-  get port() {
+  get port(): number {
     return this.usingPort;
   }
-  async get() {
+  async get(): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       if (null === this.codeGetter) {
         this.codeGetter = [resolve, reject];
@@ -63,13 +63,13 @@ export class RecivingAuthorizationCodeServer {
       }
     });
   }
-  close() {
+  close(): void {
     this.server.close();
     for (const c of this.connections.values()) {
       c.destroy();
     }
   }
-  static async init(port: number, serverResponceText: string) {
+  static async init(port: number, serverResponceText: string): Promise<RecivingAuthorizationCodeServer> {
     return new Promise<RecivingAuthorizationCodeServer>((resolve, reject) => {
       try {
         const re = new RecivingAuthorizationCodeServer(port, serverResponceText, () => {

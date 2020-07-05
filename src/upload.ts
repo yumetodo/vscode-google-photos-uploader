@@ -12,7 +12,7 @@ export class UploadManager {
   private urls_: readonly (string | undefined)[] = [];
   private noReplaceIndexes_: number[] = [];
   private tokenGetters_: (() => Promise<[string, string] | null>)[] = [];
-  async waitFileCheck() {
+  async waitFileCheck(): Promise<void> {
     await Promise.all(this.fileCheckPromises_);
   }
   createSrcGenerator(
@@ -20,15 +20,15 @@ export class UploadManager {
     s: string,
     dir: string,
     photos: Photos,
-    AbortControllerMap: Map<string, AbortController>
-  ) {
+    abortControllerMap: Map<string, AbortController>
+  ): () => string {
     const p = path.resolve(dir, s);
     if (this.uploadingImagePath_.has(p)) {
       const index = this.uploadingImagePath_.get(p);
       return () => (index != null ? this.urls_[index] || s : s);
     } else {
       const index = this.fileCheckPromises_.length;
-      this.fileCheckPromises_.push(this.createFileChecker_(index, alt, p, photos, AbortControllerMap));
+      this.fileCheckPromises_.push(this.createFileChecker_(index, alt, p, photos, abortControllerMap));
       this.uploadingImagePath_.set(p, index);
       return () => this.urls_[index] || s;
     }
@@ -38,7 +38,7 @@ export class UploadManager {
     alt: string,
     p: string,
     photos: Photos,
-    AbortControllerMap: Map<string, AbortController>
+    abortControllerMap: Map<string, AbortController>
   ) {
     try {
       await fs.stat(p);
@@ -46,18 +46,18 @@ export class UploadManager {
       this.noReplaceIndexes_.push(index);
       return;
     }
-    this.tokenGetters_.push(() => this.upload_(index, alt, p, photos, AbortControllerMap));
+    this.tokenGetters_.push(() => this.upload_(index, alt, p, photos, abortControllerMap));
   }
   private async upload_(
     index: number,
     alt: string,
     p: string,
     photos: Photos,
-    AbortControllerMap: Map<string, AbortController>
+    abortControllerMap: Map<string, AbortController>
   ): Promise<[string, string] | null> {
     const k = `upload::${p}`;
     const c = new AbortController();
-    AbortControllerMap.set(k, c);
+    abortControllerMap.set(k, c);
     try {
       const t = await photos.upload(p, c.signal);
       return [alt, t];
@@ -65,10 +65,10 @@ export class UploadManager {
       this.noReplaceIndexes_.push(index);
       return null;
     } finally {
-      AbortControllerMap.delete(k);
+      abortControllerMap.delete(k);
     }
   }
-  async execUpload(progress: Progress<{ message?: string; increment?: number }>) {
+  async execUpload(progress: Progress<{ message?: string; increment?: number }>): Promise<[string, string][]> {
     const tokens: [string, string][] = [];
     let t = waitFor(1);
     progress.report({ increment: 0 });
@@ -90,7 +90,7 @@ export class UploadManager {
     progress.report({ message: 'upload finished.' });
     return tokens;
   }
-  mergePureUrls(pureUrls: (string | undefined)[]) {
+  mergePureUrls(pureUrls: (string | undefined)[]): void {
     this.urls_ = mergePureUrlsAndNoReplaceIndexes(pureUrls, this.noReplaceIndexes_);
   }
 }

@@ -5,6 +5,7 @@ import { getPortPromise } from 'portfinder';
 import { Configuration } from './iConfiguration';
 import { RecivingAuthorizationCodeServer } from './createRecivingAuthorizationCodeServer';
 import authorizationCodeRecivingSucsessHTML from './authorizationCodeRecivingSucsess.html';
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const SCOPES = {
   READ_ONLY: 'https://www.googleapis.com/auth/photoslibrary.readonly',
   APPEND_ONLY: 'https://www.googleapis.com/auth/photoslibrary.appendonly',
@@ -49,7 +50,7 @@ export class AuthManager {
     openAuthWebPage: (url: string) => Promise<boolean>,
     clientId: string,
     clientSecret: string
-  ) {
+  ): Promise<AuthManager> {
     const server = await RecivingAuthorizationCodeServer.init(
       await getPortPromise(),
       authorizationCodeRecivingSucsessHTML

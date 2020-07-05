@@ -1,4 +1,7 @@
-export function mergePureUrlsAndNoReplaceIndexes(pureUrls: (string | undefined)[], noReplaceIndexes: number[]) {
+export function mergePureUrlsAndNoReplaceIndexes(
+  pureUrls: (string | undefined)[],
+  noReplaceIndexes: number[]
+): readonly (string | undefined)[] {
   const re: (string | undefined)[] = [];
   let i = 0;
   for (const pureUrl of pureUrls) {

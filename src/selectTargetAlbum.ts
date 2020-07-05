@@ -7,11 +7,11 @@ export interface SelectTargetAlbumResult {
   shareableUrl: string;
 }
 export async function selectTargetAlbum(
-  AbortControllerMap: Map<string, AbortController>,
+  abortControllerMap: Map<string, AbortController>,
   photos: Photos
 ): Promise<SelectTargetAlbumResult | null> {
   const listAllAbortController = new AbortController();
-  AbortControllerMap.set('listAll', listAllAbortController);
+  abortControllerMap.set('listAll', listAllAbortController);
   const albumListResponce = photos.albums
     .listAll(listAllAbortController.signal, true)
     .then(r => r.filter(a => null !== a.shareInfo));
@@ -22,7 +22,7 @@ export async function selectTargetAlbum(
     },
   ];
   const albumList = albumListResponce.then(r => {
-    AbortControllerMap.delete('listAll');
+    abortControllerMap.delete('listAll');
     return [
       ...defaltChoice,
       ...r.map(
@@ -47,17 +47,17 @@ export async function selectTargetAlbum(
         });
         if (title) {
           const albumCreateAbortController = new AbortController();
-          AbortControllerMap.set('album create', albumCreateAbortController);
+          abortControllerMap.set('album create', albumCreateAbortController);
           const album = await photos.albums.create({ album: { title: title } }, albumCreateAbortController.signal);
-          AbortControllerMap.delete('album create');
+          abortControllerMap.delete('album create');
           const albumShareAbortController = new AbortController();
-          AbortControllerMap.set('album share', albumShareAbortController);
+          abortControllerMap.set('album share', albumShareAbortController);
           const shareinfo = await photos.albums.share(
             album.id,
             { isCollaborative: false, isCommentable: true },
             albumShareAbortController.signal
           );
-          AbortControllerMap.delete('album share');
+          abortControllerMap.delete('album share');
           return shareinfo.shareableUrl ? { albumId: album.id, shareableUrl: shareinfo.shareableUrl } : null;
         }
         return null;

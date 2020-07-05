@@ -24,7 +24,7 @@ const clientInfo = {
 };
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext): void {
   const configuration = new Configuration();
   let authManager: AuthManager | null = null;
   // The command has been defined in the package.json file
@@ -72,9 +72,9 @@ export function activate(context: vscode.ExtensionContext) {
       }
       const photos = new Photos(authManager);
       configuration.reload();
-      const AbortControllerMap = new Map<string, AbortController>();
+      const abortControllerMap = new Map<string, AbortController>();
       const onCancellationRequested = () => {
-        for (const c of AbortControllerMap.values()) {
+        for (const c of abortControllerMap.values()) {
           c.abort();
         }
       };
@@ -86,7 +86,7 @@ export function activate(context: vscode.ExtensionContext) {
           textEditor.document.positionAt(0),
           textEditor.document.positionAt(text.length)
         );
-        const targetAlbum = await selectTargetAlbum(AbortControllerMap, photos);
+        const targetAlbum = await selectTargetAlbum(abortControllerMap, photos);
         if (null === targetAlbum) {
           return;
         }
@@ -94,7 +94,7 @@ export function activate(context: vscode.ExtensionContext) {
         const dir = path.dirname(selectedTabFilePath);
         const uploadManager = new UploadManager();
         const markdownImgUrlEditor = await MarkdownImgUrlEditor.init(text, (alt, s) =>
-          uploadManager.createSrcGenerator(alt, s, dir, photos, AbortControllerMap)
+          uploadManager.createSrcGenerator(alt, s, dir, photos, abortControllerMap)
         );
         try {
           await uploadManager.waitFileCheck();
@@ -111,7 +111,7 @@ export function activate(context: vscode.ExtensionContext) {
           );
           const pureUrls = await vscode.window.withProgress(
             { cancellable: false, title: 'registering images...', location: vscode.ProgressLocation.Notification },
-            async progress => imageRegister(progress, AbortControllerMap, targetAlbum, photos, tokens)
+            async progress => imageRegister(progress, abortControllerMap, targetAlbum, photos, tokens)
           );
           uploadManager.mergePureUrls(pureUrls);
           const replaced = markdownImgUrlEditor.replace();

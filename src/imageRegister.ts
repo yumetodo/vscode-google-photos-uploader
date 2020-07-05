@@ -7,33 +7,33 @@ import { waitFor } from './timer';
 import { request } from 'gaxios';
 import crypto from 'crypto';
 
-async function fetchImageUrlsWrap(shareableUrl: string, AbortControllerMap: Map<string, AbortController>) {
+async function fetchImageUrlsWrap(shareableUrl: string, abortControllerMap: Map<string, AbortController>) {
   const fetchImageUrlsAbortController = new AbortController();
-  AbortControllerMap.set('fetchImageUrls', fetchImageUrlsAbortController);
+  abortControllerMap.set('fetchImageUrls', fetchImageUrlsAbortController);
   const re = await fetchImageUrls(shareableUrl, fetchImageUrlsAbortController.signal);
-  AbortControllerMap.delete('fetchImageUrls');
+  abortControllerMap.delete('fetchImageUrls');
   return re;
 }
-async function getFileAndHash(url: string, AbortControllerMap: Map<string, AbortController>) {
+async function getFileAndHash(url: string, abortControllerMap: Map<string, AbortController>) {
   const controller = new AbortController();
-  AbortControllerMap.set(`getFileAndHash:${url}`, controller);
+  abortControllerMap.set(`getFileAndHash:${url}`, controller);
   const img = await request<ArrayBuffer>({ url: url, responseType: 'arraybuffer', signal: controller.signal });
-  AbortControllerMap.delete(`getFileAndHash:${url}`);
+  abortControllerMap.delete(`getFileAndHash:${url}`);
   const cipher = crypto.createHash('sha512');
   cipher.update(new DataView(img.data));
   return cipher.digest('hex');
 }
 async function getImghasesfromWebScraping(
   info: readonly ImageInfo[],
-  AbortControllerMap: Map<string, AbortController>
+  abortControllerMap: Map<string, AbortController>
 ) {
-  return Promise.all(info.map(async i => getFileAndHash(`${i.url}=w${i.width}-h${i.height}`, AbortControllerMap)));
+  return Promise.all(info.map(async i => getFileAndHash(`${i.url}=w${i.width}-h${i.height}`, abortControllerMap)));
 }
-async function getImghasesfromAPI(photos: Photos, ids: string[], AbortControllerMap: Map<string, AbortController>) {
+async function getImghasesfromAPI(photos: Photos, ids: string[], abortControllerMap: Map<string, AbortController>) {
   const batchGetAbortController = new AbortController();
-  AbortControllerMap.set('batchGet', batchGetAbortController);
+  abortControllerMap.set('batchGet', batchGetAbortController);
   const re2 = await photos.mediaItems.batchGet(ids, batchGetAbortController.signal);
-  AbortControllerMap.delete('batchGet');
+  abortControllerMap.delete('batchGet');
   const hashPromises = re2.map(async m => {
     if (
       m.mediaItem &&
@@ -44,7 +44,7 @@ async function getImghasesfromAPI(photos: Photos, ids: string[], AbortController
     ) {
       return getFileAndHash(
         `${m.mediaItem.baseUrl}=w${m.mediaItem.mediaMetadata.width}-h${m.mediaItem.mediaMetadata.height}`,
-        AbortControllerMap
+        abortControllerMap
       );
     } else {
       throw new Error('batchGet fail');
@@ -56,10 +56,10 @@ async function batchCreateWrap(
   photos: Photos,
   albumId: string,
   tokens: [string, string][],
-  AbortControllerMap: Map<string, AbortController>
+  abortControllerMap: Map<string, AbortController>
 ): Promise<string[]> {
   const batchCreateAbortController = new AbortController();
-  AbortControllerMap.set('batchCreate', batchCreateAbortController);
+  abortControllerMap.set('batchCreate', batchCreateAbortController);
   const re1 = await photos.mediaItems.batchCreate(
     {
       albumId: albumId,
@@ -74,7 +74,7 @@ async function batchCreateWrap(
     },
     batchCreateAbortController.signal
   );
-  AbortControllerMap.delete('batchCreate');
+  abortControllerMap.delete('batchCreate');
   return re1.map(m => {
     if (m.mediaItem && m.mediaItem.id) {
       return m.mediaItem.id;
@@ -85,12 +85,12 @@ async function batchCreateWrap(
 }
 async function imageRegisterRetryAfterfetchImageUrls(
   targetAlbum: SelectTargetAlbumResult,
-  AbortControllerMap: Map<string, AbortController>
+  abortControllerMap: Map<string, AbortController>
 ) {
   let info: ImageInfo[] | null = [];
   for (
     let j = 0;
-    j < 12 && null === (info = await fetchImageUrlsWrap(targetAlbum.shareableUrl, AbortControllerMap));
+    j < 12 && null === (info = await fetchImageUrlsWrap(targetAlbum.shareableUrl, abortControllerMap));
     ++j
   ) {
     await waitFor(10000);
@@ -102,20 +102,20 @@ async function imageRegisterRetryAfterfetchImageUrls(
 }
 export async function imageRegister(
   progress: Progress<{ message?: string; increment?: number }>,
-  AbortControllerMap: Map<string, AbortController>,
+  abortControllerMap: Map<string, AbortController>,
   targetAlbum: SelectTargetAlbumResult,
   photos: Photos,
   tokens: [string, string][]
-) {
+): Promise<(string | undefined)[]> {
   progress.report({ message: 'Register images' });
-  const ids = await batchCreateWrap(photos, targetAlbum.albumId, tokens, AbortControllerMap);
+  const ids = await batchCreateWrap(photos, targetAlbum.albumId, tokens, abortControllerMap);
   progress.report({ message: 'Get image hashes' });
-  const fromAPIPromise = getImghasesfromAPI(photos, ids, AbortControllerMap);
+  const fromAPIPromise = getImghasesfromAPI(photos, ids, abortControllerMap);
   await waitFor(2000);
   const info =
-    (await fetchImageUrlsWrap(targetAlbum.shareableUrl, AbortControllerMap)) ||
-    (await imageRegisterRetryAfterfetchImageUrls(targetAlbum, AbortControllerMap));
-  const fromWebScraping = await getImghasesfromWebScraping(Object.freeze(info), AbortControllerMap);
+    (await fetchImageUrlsWrap(targetAlbum.shareableUrl, abortControllerMap)) ||
+    (await imageRegisterRetryAfterfetchImageUrls(targetAlbum, abortControllerMap));
+  const fromWebScraping = await getImghasesfromWebScraping(Object.freeze(info), abortControllerMap);
   progress.report({ message: 'Match image info' });
   const fromAPI = await fromAPIPromise;
   return fromAPI.map(a => {

@@ -104,7 +104,7 @@ export namespace Photos {
   export interface Status {
     code?: number;
     message?: string;
-    details?: object[];
+    details?: Record<string, unknown>[];
   }
   export interface MediaItemResult {
     status?: Status;
@@ -207,7 +207,7 @@ export namespace Photos {
     constructor(authManager: AuthManager) {
       this.authManager = authManager;
     }
-    async create(body: Albums.CreateBody, signal: AbortSignal) {
+    async create(body: Albums.CreateBody, signal: AbortSignal): Promise<OutputonlyAlbum> {
       return this.authManager
         .request<OutputonlyAlbum>({
           method: 'POST',
@@ -252,7 +252,7 @@ export namespace Photos {
       }
       return re;
     }
-    async share(albumId: string, opt: SharedAlbumOptions, signal: AbortSignal) {
+    async share(albumId: string, opt: SharedAlbumOptions, signal: AbortSignal): Promise<ShareInfo> {
       return this.authManager
         .request<Albums.ShareResponce>({
           method: 'POST',
@@ -347,7 +347,7 @@ export namespace Photos {
     }
     async searchAll(albumId: string, signal: AbortSignal): Promise<MediaItem[]>;
     async searchAll(filters: Filters, signal: AbortSignal): Promise<MediaItem[]>;
-    async searchAll(b: string | Filters, signal: AbortSignal) {
+    async searchAll(b: string | Filters, signal: AbortSignal): Promise<MediaItem[]> {
       let re: MediaItem[] = [];
       let responce: MediaItems.SearchResponce;
       const opt: MediaItems.SearchOptions = {
