@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.2.1
+
+- fix: follow google photos change ( [yumetodo/google-photos-album-image-url-fetch#6](https://github.com/yumetodo/google-photos-album-image-url-fetch/pull/6) )
+- fix: update dependencies
+
 ## 2.2.0
 
 - feat: introduce google-photos-uploader.clear command ( #15 )
