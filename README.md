@@ -85,6 +85,14 @@ On this phase, this plugin executes below:
 
 ## Known Issue
 
+### Image count per album limitation
+
+Currently, do not make the situation that over 500 images in the album which you specified.
+
+[yumetodo/google-photos-album-image-url-fetch#3](https://github.com/yumetodo/google-photos-album-image-url-fetch/issues/3)
+
+### Produced markdown
+
 Because of [pulldown-cmark-to-cmark](https://crates.io/crates/pulldown-cmark-to-cmark) limitation, all code block will be replaced like below:
 
 `before`:
