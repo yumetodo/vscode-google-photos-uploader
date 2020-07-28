@@ -38,6 +38,10 @@ Markdownをパースするライブラリは数あれど、パースした構文
 次にこれだとTypeScriptの型がうまくつかないことと非同期処理を扱いにくいのでラップしたものを制作しました。  
 [https://github.com/yumetodo/markdown_img_url_editor](https://github.com/yumetodo/markdown_img_url_editor)
 
+#### WASMと非同期処理
+
+Rust側で非同期処理の仕様がまだ固まっていなかったこと、またその実装が乱立していることもあり、JavaScript側から`Promise`を渡してRust側で取り扱うのはうまくいきませんでした。そこで極めて原始的なコールバック関数を渡す方法を採用しました。今回で言えば、画像のパスの部分の文字列置換が必要になりますが、置換後の文字列を返す関数を渡すようにしました(`upload.ts`の`createSrcGenerator`関数を参照)。
+
 ### Google Photosから写真のURLを取る方法
 
 制作当初、そういう機能はGoogle Photos APIにあるものと信じていました。また[`mediaItems.batchGet`](https://developers.google.com/photos/library/reference/rest/v1/mediaItems/batchGet)で取れる`MediaItemResult`オブジェクトの中の`mediaItem`には[`baseUrl`というのが含まれており](https://developers.google.com/photos/library/reference/rest/v1/mediaItems#MediaItem)、これをブラウザでアクセスしてみると画像が見てるため、発見が遅れました。
