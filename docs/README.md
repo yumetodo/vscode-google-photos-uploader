@@ -56,7 +56,7 @@ Markdownをパースするライブラリは数あれど、パースした構文
 >
 > Base URLs are strings which are included in the response when you list albums or access media items. They are valid for 60 minutes and require additional parameters as they cannot be used as is.
 
-こういった事情でどうにかして永続的な画像のURLを取得する必要が出てきた。
+こういった事情でどうにかして永続的な画像のURLを取得する必要が出てきました。
 
 Google Photosの共有アルバムのページのHTMLを取得して解析していたところ、[アルバム内の写真数が500を超えない限り](https://github.com/yumetodo/google-photos-album-image-url-fetch/issues/3)において、写真のURLがHTMLに含まれていることを発見しました。
 
