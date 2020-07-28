@@ -71,5 +71,7 @@ Webスクレイピングを使うということはGoogle側の仕様変更を�
 
 GoogleのAPIを叩くには当然OAuthによる認可フローが必要です。認可が出たことを知るにはいくつか方法がありますが、当初認可コードをユーザーにコピーしてもらい、VSCodeのダイアログに貼り付けてもらう方式を採用しました。ところが製作中にGoogleにセキュリティが強化され、この方法は非推奨になりました。
 
+[OAuth 2.0 for Mobile & Desktop Apps  |  Google Identity Platform](https://developers.google.com/identity/protocols/oauth2/native-app)
+
 そこで`Loopback IP address`方式を実装しました。つまりプラグイン側でHTTPサーバーを立て、そこにリダイレクトしてもらうことで認可コードを渡す方法です。
 ([`1bc6583`](https://github.com/yumetodo/vscode-google-photos-uploader/commit/1bc6583295e61c7f0e068bf6f932abf95f479ac2))
