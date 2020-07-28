@@ -23,6 +23,10 @@ Keep in mind that this plugin will publish all images the target markdown file r
 
 See [google-photos-uploaderの製作背景と技術的解説](docs/README.md)
 
+## How to install
+
+In extension tab on vscode, search `google photos` and you can find `Google Photos Uploader(unofficial)`. Click `install`.
+
 ## How to use
 
 ### Run command
