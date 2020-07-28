@@ -83,7 +83,7 @@ On this phase, this plugin executes below:
 
 ![finish](images/finish.jpg)
 
-## Known Issue
+## Known Issues
 
 ### Image count per album limitation
 
