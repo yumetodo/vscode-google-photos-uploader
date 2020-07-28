@@ -19,6 +19,10 @@ Keep in mind that this plugin will publish all images the target markdown file r
 
 ![select_upload](images/working.gif)
 
+## Technical Information(Ja)
+
+See [google-photos-uploaderの製作背景と技術的解説](docs/README.md)
+
 ## How to use
 
 ### Run command
