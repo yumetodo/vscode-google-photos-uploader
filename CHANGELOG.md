@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.2.2
+
+- fix: follow google photos change ( [yumetodo/google-photos-album-image-url-fetch@`a6943a2`](https://github.com/yumetodo/google-photos-album-image-url-fetch/commit/a6943a25687d5dee5af75bbb84fc1a33cf3da8df) )
+- fix: update dependencies
+
 ## 2.2.1
 
 - fix: follow google photos change ( [yumetodo/google-photos-album-image-url-fetch#6](https://github.com/yumetodo/google-photos-album-image-url-fetch/pull/6) )
