@@ -1,5 +1,13 @@
 # Change Log
 
+## 2.2.3
+
+- fix: update `markdown_img_url_editor` to `4.1.0`
+  - known issue due to `pulldown-cmark-to-cmark` is solved ( [yumetodo/markdown_img_url_editor#40](https://github.com/yumetodo/markdown_img_url_editor/issues/40) )  
+    fix: update `markdown_img_url_editor_rust` to `1.0.3`
+    - Now, modify text directly using `pulldown_cmark::Parser::into_offset_iter()` instead of using `pulldown-cmark-to-cmark`
+- fix: update dependencies
+
 ## 2.2.2
 
 - fix: follow google photos change ( [yumetodo/google-photos-album-image-url-fetch@`a6943a2`](https://github.com/yumetodo/google-photos-album-image-url-fetch/commit/a6943a25687d5dee5af75bbb84fc1a33cf3da8df) )

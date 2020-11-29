@@ -30,8 +30,8 @@ jobs:
     - run: npm ci
     - run: npm run lint
     - run: npm run build
-    - name: publish when possible
-      if: success() && startsWith( github.ref, 'refs/tags/releases/')
+    - name: publish when possible (${{ github.ref }})
+      if: success() && startsWith( github.ref, 'refs/tags/')
       run: npm run deploy
       env:
         VSCE_PAT: ${{ secrets.VSCE_PAT }}
