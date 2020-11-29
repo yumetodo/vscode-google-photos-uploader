@@ -6,7 +6,7 @@ export class RecivingAuthorizationCodeServer {
   private server: Server;
   private usingPort: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private codeGetter: [(value?: string | PromiseLike<string> | undefined) => void, (reason?: any) => void] | null;
+  private codeGetter: [(value: string | PromiseLike<string>) => void, (reason?: any) => void] | null;
   private constructor(port: number, serverResponceText: string, onServerListening: () => void) {
     this.codeGetter = null;
     this.usingPort = port;
@@ -23,8 +23,7 @@ export class RecivingAuthorizationCodeServer {
         res.end();
         return;
       }
-      const resolve = this.codeGetter[0];
-      const reject = this.codeGetter[1];
+      const [resolve, reject] = this.codeGetter;
       this.codeGetter = null;
       const u = new URL(req.url, dummyBaseURL);
       try {
