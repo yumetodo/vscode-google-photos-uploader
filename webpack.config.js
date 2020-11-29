@@ -62,7 +62,7 @@ const config = {
       },
       {
         test: /\.html$/,
-        use: 'asset/source',
+        type: 'asset/source',
       },
       {
         test: /\.wasm$/,
