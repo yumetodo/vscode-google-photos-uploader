@@ -4,7 +4,7 @@
 	"description": "find local image link, upload to Google Photos, and replace link",
 	"version": "2.2.2",
 	"engines": {
-		"vscode": "^1.49.0"
+		"vscode": "^1.51.0"
 	},
 	"author": "yumetodo",
 	"license": "BSL-1.0",
