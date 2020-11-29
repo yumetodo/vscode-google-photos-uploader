@@ -1,6 +1,7 @@
 *               text=auto
-*.js            text
-*.ts            text
+*.js            text eol=lf
+*.ts            text eol=lf
 *.json          text
 .gitattributes  text eol=lf
+.eslintignore   text eol=lf
 test/input/*.md text eol=lf
