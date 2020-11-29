@@ -4,6 +4,7 @@
 )](https://marketplace.visualstudio.com/items?itemName=yumetodo.google-photos-uploader)
 [![Installs](https://vsmarketplacebadge.apphb.com/installs/yumetodo.google-photos-uploader.svg
 )](https://marketplace.visualstudio.com/items?itemName=yumetodo.google-photos-uploader)
+![Build](https://github.com/yumetodo/vscode-google-photos-uploader/workflows/build/badge.svg)
 
 ![icon](images/icon.png)
 
