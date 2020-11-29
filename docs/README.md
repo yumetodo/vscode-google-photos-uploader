@@ -68,8 +68,11 @@ Google Photosの共有アルバムのページのHTMLを取得して解析して
 [https://github.com/yumetodo/google-photos-album-image-url-fetch](https://github.com/yumetodo/google-photos-album-image-url-fetch)  
 です。
 
-Webスクレイピングを使うということはGoogle側の仕様変更を迅速に察知する必要があります。そこで毎日CIを回すことで検知しています。実際2020/06/15頃に仕様変更がありましたがCIによって検知されました。  
-[https://github.com/yumetodo/google-photos-album-image-url-fetch/commit/3865e2ca89d8b0517274c50ba59ff1dfc1e576c2](https://github.com/yumetodo/google-photos-album-image-url-fetch/commit/3865e2ca89d8b0517274c50ba59ff1dfc1e576c2)
+Webスクレイピングを使うということはGoogle側の仕様変更を迅速に察知する必要があります。そこで毎日CIを回すことで検知しています。実際2020/06/15頃と2020/08/25頃に仕様変更がありましたがCIによって検知されました。  
+[yumetodo/google-photos-album-image-url-fetch@`3865e2c`](https://github.com/yumetodo/google-photos-album-image-url-fetch/commit/3865e2ca89d8b0517274c50ba59ff1dfc1e576c2)
+[yumetodo/google-photos-album-image-url-fetch@`a6943a2`](https://github.com/yumetodo/google-photos-album-image-url-fetch/commit/a6943a25687d5dee5af75bbb84fc1a33cf3da8df)
+
+しかしながら先行きの不透明感は否めません。Picasa時代から受け継いできたもう一つの形式の画像のURLであり、Google Picker APIで取得できていたものは、2020/3/10頃以降突如として表示されなくなったりログインが必要になってしまいました。この方法もいつまで使えるのかわかりません。
 
 ### OAuth
 
