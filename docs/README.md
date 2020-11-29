@@ -30,13 +30,17 @@ Markdownをパースするライブラリは数あれど、パースした構文
 
 そこで当初自作を試みましたが、[yumetodo/markdown_img_url_editor#7](https://github.com/yumetodo/markdown_img_url_editor/issues/7)や[yumetodo/vscode-google-photos-uploader#12](https://github.com/yumetodo/vscode-google-photos-uploader/issues/12)といったバグに悩まされました。
 
-その後見つけたRust製の[pulldown-cmark](https://crates.io/crates/pulldown-cmark)/[pulldown-cmark-to-cmark](https://crates.io/crates/pulldown-cmark-to-cmark)はこの要求を満たすライブラリでした。
+その後見つけたRust製の[pulldown-cmark](https://crates.io/crates/pulldown-cmark)/[pulldown-cmark-to-cmark]はこの要求を満たすライブラリでした。
 
 まずこれをラップするプログラムをRustで記述し、`wasm-pack`を用いてWASMに変換しました。  
 [https://github.com/yumetodo/markdown_img_url_editor_rust](https://github.com/yumetodo/markdown_img_url_editor_rust)
 
 次にこれだとTypeScriptの型がうまくつかないことと非同期処理を扱いにくいのでラップしたものを制作しました。  
 [https://github.com/yumetodo/markdown_img_url_editor](https://github.com/yumetodo/markdown_img_url_editor)
+
+その後某所の指摘により構文木から文字列中のURLの位置を取り出せることがわかり、単なる文字列置換にすることで[pulldown-cmark-to-cmark]を排除しました([yumetodo/markdown_img_url_editor#40](https://github.com/yumetodo/markdown_img_url_editor/issues/40))。
+
+[pulldown-cmark-to-cmark]: https://crates.io/crates/pulldown-cmark-to-cmark
 
 #### WASMと非同期処理
 
