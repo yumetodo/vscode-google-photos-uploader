@@ -5,7 +5,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const TerserPlugin = require('terser-webpack-plugin');
+const terserPlugin = require('terser-webpack-plugin');
 
 /**@type {import('webpack').Configuration}*/
 const config = {
@@ -23,7 +23,7 @@ const config = {
   devtool: 'source-map',
   optimization: {
     minimizer: [
-      new TerserPlugin({
+      new terserPlugin({
         terserOptions: {
           mangle: false,
           keep_classnames: true,
