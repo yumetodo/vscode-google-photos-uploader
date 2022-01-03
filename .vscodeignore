@@ -10,7 +10,10 @@ webpack.config.js
 .eslintignore
 vsc-extension-quickstart.md
 **/tsconfig.json
-**/tslint.json
+**/eslintrc.json
+.eslintignore
+.prettierignore
+.prettierrc.json
 **/*.map
 **/*.ts
 **/*.avi
