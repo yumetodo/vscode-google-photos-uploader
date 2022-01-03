@@ -1,95 +1,95 @@
 {
-	"name": "google-photos-uploader",
-	"displayName": "Google Photos Uploader(unofficial)",
-	"description": "find local image link, upload to Google Photos, and replace link",
-	"version": "2.2.3",
-	"engines": {
-		"vscode": "^1.51.0"
-	},
-	"author": "yumetodo",
-	"license": "BSL-1.0",
-	"publisher": "yumetodo",
-	"icon": "images/icon.png",
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onCommand:google-photos-uploader.upload"
-	],
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/yumetodo/vscode-google-photos-uploader"
-	},
-	"main": "./dist/extension.js",
-	"contributes": {
-		"menus": {
-			"commandPalette": [
-				{
-					"command": "google-photos-uploader.upload",
-					"when": "editorLangId == markdown"
-				}
-			]
-		},
-		"commands": [
-			{
-				"command": "google-photos-uploader.upload",
-				"title": "google-photos-uploader: Upload image and replace"
-			},
-			{
-				"command": "google-photos-uploader.clear",
-				"title": "google-photos-uploader: Clear auth cache"
-			}
-		],
-		"configuration": [
-			{
-				"type": "object",
-				"title": "Google Photos Uploader Configuration",
-				"properties": {
-					"googlePhotosUploader.access_token": {
-						"type": "string",
-						"default": null,
-						"description": "Access Tokens. See RFC 6749 §10.3"
-					},
-					"googlePhotosUploader.refresh_token": {
-						"type": "string",
-						"default": null,
-						"description": "Refresh Tokens. See RFC 6749 §10.4"
-					}
-				}
-			}
-		]
-	},
-	"scripts": {
-		"vscode:prepublish": "webpack --mode production",
-		"webpack": "webpack --mode development",
-		"webpack-dev": "webpack --mode development --watch",
-		"test-compile": "tsc -p ./",
-		"lint": "eslint --ext .ts .",
-		"lint:fix": "eslint --fix --ext .ts .",
-		"build": "vsce package",
-		"deploy": "vsce publish"
-	},
-	"devDependencies": {
-		"@types/node": "^14.14.10",
-		"@types/vscode": "^1.51.0",
-		"@typescript-eslint/eslint-plugin": "^4.8.2",
-		"@typescript-eslint/parser": "^4.8.2",
-		"eslint": "^7.14.0",
-		"eslint-config-prettier": "^6.15.0",
-		"eslint-plugin-prettier": "^3.1.4",
-		"prettier": "^2.2.1",
-		"ts-loader": "^8.0.11",
-		"typescript": "^4.1.2",
-		"vsce": "^1.81.1",
-		"webpack": "^5.9.0",
-		"webpack-cli": "^4.2.0"
-	},
-	"dependencies": {
-		"abort-controller": "^3.0.0",
-		"gaxios": "^4.0.1",
-		"google-photos-album-image-url-fetch": "^2.2.0",
-		"googleapis": "^65.0.0",
-		"markdown_img_url_editor": "^4.1.0",
-		"portfinder": "^1.0.28"
-	}
+  "name": "google-photos-uploader",
+  "displayName": "Google Photos Uploader(unofficial)",
+  "description": "find local image link, upload to Google Photos, and replace link",
+  "version": "2.2.3",
+  "engines": {
+    "vscode": "^1.63.1"
+  },
+  "author": "yumetodo",
+  "license": "BSL-1.0",
+  "publisher": "yumetodo",
+  "icon": "images/icon.png",
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:google-photos-uploader.upload"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yumetodo/vscode-google-photos-uploader"
+  },
+  "main": "./dist/extension.js",
+  "contributes": {
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "google-photos-uploader.upload",
+          "when": "editorLangId == markdown"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "google-photos-uploader.upload",
+        "title": "google-photos-uploader: Upload image and replace"
+      },
+      {
+        "command": "google-photos-uploader.clear",
+        "title": "google-photos-uploader: Clear auth cache"
+      }
+    ],
+    "configuration": [
+      {
+        "type": "object",
+        "title": "Google Photos Uploader Configuration",
+        "properties": {
+          "googlePhotosUploader.access_token": {
+            "type": "string",
+            "default": null,
+            "description": "Access Tokens. See RFC 6749 §10.3"
+          },
+          "googlePhotosUploader.refresh_token": {
+            "type": "string",
+            "default": null,
+            "description": "Refresh Tokens. See RFC 6749 §10.4"
+          }
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "webpack --mode production",
+    "webpack": "webpack --mode development",
+    "webpack-dev": "webpack --mode development --watch",
+    "test-compile": "tsc -p ./",
+    "lint": "eslint --ext .ts .",
+    "lint:fix": "eslint --fix --ext .ts .",
+    "build": "vsce package",
+    "deploy": "vsce publish",
+    "prettier": "prettier --write ."
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.7",
+    "@types/vscode": "^1.63.1",
+    "@typescript-eslint/eslint-plugin": "^5.8.1",
+    "@typescript-eslint/parser": "^5.8.1",
+    "eslint": "^8.6.0",
+    "eslint-config-prettier": "^8.3.0",
+    "prettier": "^2.5.1",
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.5.4",
+    "vsce": "^2.6.0",
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1"
+  },
+  "dependencies": {
+    "abort-controller": "^3.0.0",
+    "gaxios": "^4.3.2",
+    "google-photos-album-image-url-fetch": "^2.2.1",
+    "googleapis": "^92.0.0",
+    "markdown_img_url_editor": "^4.1.1",
+    "portfinder": "^1.0.28"
+  }
 }

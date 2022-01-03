@@ -33,9 +33,6 @@ const config = {
       }),
     ],
   },
-  experiments: {
-    asset: true,
-  },
   externals: {
     vscode: 'commonjs vscode', // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
     markdown_img_url_editor_rust: 'commonjs2 markdown_img_url_editor_rust',

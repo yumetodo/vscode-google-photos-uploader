@@ -1,0 +1,7 @@
+out/**
+pkg/**
+dist/**
+vsc-extension-quickstart.md
+**/tsconfig.json
+**/*.map
+package-lock.json
