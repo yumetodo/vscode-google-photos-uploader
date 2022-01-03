@@ -1,9 +1,7 @@
 # google-photos-uploader
 
-[![Version](https://vsmarketplacebadge.apphb.com/version-short/yumetodo.google-photos-uploader.svg
-)](https://marketplace.visualstudio.com/items?itemName=yumetodo.google-photos-uploader)
-[![Installs](https://vsmarketplacebadge.apphb.com/installs/yumetodo.google-photos-uploader.svg
-)](https://marketplace.visualstudio.com/items?itemName=yumetodo.google-photos-uploader)
+[![Version](https://vsmarketplacebadge.apphb.com/version-short/yumetodo.google-photos-uploader.svg)](https://marketplace.visualstudio.com/items?itemName=yumetodo.google-photos-uploader)
+[![Installs](https://vsmarketplacebadge.apphb.com/installs/yumetodo.google-photos-uploader.svg)](https://marketplace.visualstudio.com/items?itemName=yumetodo.google-photos-uploader)
 ![Build](https://github.com/yumetodo/vscode-google-photos-uploader/workflows/build/badge.svg)
 
 ![icon](images/icon.png)
@@ -22,7 +20,7 @@ Keep in mind that this plugin will publish all images the target markdown file r
 
 ## Technical Information(Ja)
 
-See [google-photos-uploaderの製作背景と技術的解説](docs/README.md)
+See [google-photos-uploader の製作背景と技術的解説](docs/README.md)
 
 ## How to install
 
@@ -43,14 +41,14 @@ This plugin sometimes request you OAuth2 Authentication.
 In this case, default browser will be started.
 
 1. Select Google acount and login  
-![oauth2_select_account](images/oauth2_select_account.png)
+   ![oauth2_select_account](images/oauth2_select_account.png)
 2. Authorize these parmissions.  
-![oauth2_scope_check_1](images/oauth2_scope_check_1.png)  
-![oauth2_scope_check_1](images/oauth2_scope_check_2.png)
+   ![oauth2_scope_check_1](images/oauth2_scope_check_1.png)  
+   ![oauth2_scope_check_1](images/oauth2_scope_check_2.png)
 3. Authorize these parmissions again!(I don't know why authorize phase are duplicated)  
-![oauth2_scope_check_3](images/oauth2_scope_check_3.png)
+   ![oauth2_scope_check_3](images/oauth2_scope_check_3.png)
 4. Sucess! Go back to vscode.  
-![oauth2_success](images/oauth2_success.png)
+   ![oauth2_success](images/oauth2_success.png)
 
 ## Select Album
 

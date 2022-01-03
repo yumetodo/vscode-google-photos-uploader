@@ -1,8 +1,8 @@
 # Link
 
-- [[追記あり] Google Photos APIsでアルバム作成と写真のアップロード - Qiita](https://qiita.com/zaki-lknr/items/97c363c12ede4c1f25d2)
-- [Upload media  |  Google Photos APIs  |  Google Developers](https://developers.google.com/photos/library/guides/upload-media)
-- [Method: mediaItems.search  |  Google Photos APIs  |  Google Developers](https://developers.google.com/photos/library/reference/rest/v1/mediaItems/search)
+- [[追記あり] Google Photos APIs でアルバム作成と写真のアップロード - Qiita](https://qiita.com/zaki-lknr/items/97c363c12ede4c1f25d2)
+- [Upload media | Google Photos APIs | Google Developers](https://developers.google.com/photos/library/guides/upload-media)
+- [Method: mediaItems.search | Google Photos APIs | Google Developers](https://developers.google.com/photos/library/reference/rest/v1/mediaItems/search)
 - [vscode-extension-samples/helper.ts at f9955406b4cad550fdfa891df23a84a2b344c3d8 · Microsoft/vscode-extension-samples](https://github.com/Microsoft/vscode-extension-samples/blob/f9955406b4cad550fdfa891df23a84a2b344c3d8/lsp-log-streaming-sample/client/src/test/helper.ts)
 - [googleapis - npm](https://www.npmjs.com/package/googleapis)
 - [Search · authtoken](https://github.com/tigerxy/VSCode-ShareCode/search?q=authtoken&unscoped_q=authtoken)
@@ -13,9 +13,9 @@
 - [JustinBeckwith/gaxios: An HTTP request client that provides an axios like interfance over top of node-fetch. Super lightweight. Supports proxies and all sorts of other stuff.](https://github.com/JustinBeckwith/gaxios)
 - [bitinn/node-fetch: A light-weight module that brings window.fetch to Node.js](https://github.com/bitinn/node-fetch#request-cancellation-with-abortsignal)
 - [abort-controller - npm](https://www.npmjs.com/package/abort-controller)
-- [Visual Studio Codeのコマンドパレットでリスト(Quick Pick)を出す方法](https://clickan.click/vsc-list-api/)
+- [Visual Studio Code のコマンドパレットでリスト(Quick Pick)を出す方法](https://clickan.click/vsc-list-api/)
 - [googlephotos - npm](https://www.npmjs.com/package/googlephotos)
 - [Google Photos API を使用した画像の自動アップロード - Qiita](https://qiita.com/inasawa/items/e5362dec4bd45d6900f7)
 - [epoberezkin/fast-deep-equal: The fastest deep equality check with Date and RegExp support](https://github.com/epoberezkin/fast-deep-equal)
-- [vscodeのextensionですべてのテキストを書き換える - garicchi.com](https://garicchi.com/?p=19533)
+- [vscode の extension ですべてのテキストを書き換える - garicchi.com](https://garicchi.com/?p=19533)
 - [Commands | Visual Studio Code Extension API](https://code.visualstudio.com/api/extension-guides/command)
