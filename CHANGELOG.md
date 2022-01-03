@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.2.4
+
+- fix: update dependencies
+
 ## 2.2.3
 
 - fix: update `markdown_img_url_editor` to `4.1.0`
