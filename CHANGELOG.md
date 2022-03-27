@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.2.5
+
+- fix: update dependencies
+
 ## 2.2.4
 
 - fix: update dependencies
